@@ -6,19 +6,24 @@ markdown: kramdown
 paginate: 12
 paginate_path: "/page:num"
 
+# Google Analytics (replace with your actual tracking ID)
+# Get your tracking ID from: https://analytics.google.com
+# Format: G-XXXXXXXXXX (GA4) or UA-XXXXXXXXX-X (Universal Analytics)
+google_analytics: ""  # Add your Google Analytics ID here
+
 # AdSense Configuration (replace with your actual client ID)
 # adsense_client_id: "ca-pub-XXXXXXXXXXXX"
 
 # Social & Contact
-# email: your-email@example.com
-# github_username: kundan007b
+email: contact@kbhaskar.tech
+github_username: kundan007b
 # twitter_username: your_twitter
 
 defaults:
   - scope: { path: "" }
     values: { layout: "post" }
 
-include: [_includes/adsense.html, _includes/seo.html, _includes/lang-toggle.html]
+include: [_includes/adsense.html, _includes/seo.html, _includes/lang-toggle.html, _includes/analytics.html]
 
 # Exclude from build
 exclude:
