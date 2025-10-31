@@ -3,6 +3,8 @@ on:
   schedule:
     # Run every hour at minute 0 (00:00, 01:00, 02:00, etc.)
     - cron: '0 * * * *'
+    # Also run at minute 40 to start immediately
+    - cron: '40 * * * *'
   workflow_dispatch:
 jobs:
   generate:
