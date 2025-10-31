@@ -40,6 +40,8 @@ IMGDIR.mkdir(parents=True, exist_ok=True)
 
 # API key validation
 API = os.getenv("GEMINI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 if not API:
     logger.error("GEMINI_API_KEY environment variable not set")
     sys.exit(1)
@@ -93,7 +95,7 @@ def g_text(prompt: str) -> Dict:
         json.JSONDecodeError: If response is not valid JSON
     """
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={API}"
+        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={API}"
         response = requests.post(
             url,
             json={"contents": [{"parts": [{"text": prompt}]}]},
@@ -144,30 +146,58 @@ def g_image(prompt: str, size: str = "1280x720") -> str:
         requests.RequestException: If API call fails after retries
     """
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateImage?key={API}"
-        enhanced_prompt = f"{prompt}. Generate a realistic editorial Indian news photograph, 16:9 aspect, neutral tone, professional quality."
-        
-        response = requests.post(
-            url,
-            json={"prompt": enhanced_prompt, "size": size, "output": "base64"},
-            timeout=120
-        )
-        response.raise_for_status()
-        
-        img_data = base64.b64decode(response.json()["image"]["data"])
-        
-        # Optimize image
-        img = Image.open(BytesIO(img_data))
-        img = optimize_image(img)
-        
-        # Save with content-based filename
-        filename = hashlib.md5(enhanced_prompt.encode()).hexdigest()[:10] + ".jpg"
-        filepath = IMGDIR / filename
-        
-        img.save(filepath, "JPEG", quality=IMAGE_QUALITY, optimize=True)
-        logger.info(f"✓ Image generated and saved: {filename}")
-        
-        return f"/assets/images/{filename}"
+        # Use OpenAI DALL-E if API key is available, otherwise create placeholder
+        if OPENAI_API_KEY:
+            url = "https://api.openai.com/v1/images/generations"
+            enhanced_prompt = f"Professional Indian news editorial photograph about: {prompt}. Photorealistic, neutral tone, high quality, 16:9 aspect ratio."
+            
+            response = requests.post(
+                url,
+                headers={
+                    "Authorization": f"Bearer {OPENAI_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": "dall-e-3",
+                    "prompt": enhanced_prompt,
+                    "size": "1792x1024",
+                    "quality": "standard",
+                    "n": 1
+                },
+                timeout=120
+            )
+            response.raise_for_status()
+            
+            # Download the generated image
+            image_url = response.json()["data"][0]["url"]
+            img_response = requests.get(image_url, timeout=60)
+            img_response.raise_for_status()
+            img_data = img_response.content
+            
+            # Optimize image
+            img = Image.open(BytesIO(img_data))
+            img = optimize_image(img)
+            
+            # Save with content-based filename
+            filename = hashlib.md5(enhanced_prompt.encode()).hexdigest()[:10] + ".jpg"
+            filepath = IMGDIR / filename
+            
+            img.save(filepath, "JPEG", quality=IMAGE_QUALITY, optimize=True)
+            logger.info(f"✓ Image generated and saved: {filename}")
+            
+            return f"/assets/images/{filename}"
+        else:
+            # Create placeholder image if no OpenAI key
+            logger.warning("OPENAI_API_KEY not set, creating placeholder image")
+            img = Image.new('RGB', (1792, 1024), color='#1a73e8')
+            
+            filename = hashlib.md5(topic.encode()).hexdigest()[:10] + ".jpg"
+            filepath = IMGDIR / filename
+            
+            img.save(filepath, "JPEG", quality=IMAGE_QUALITY, optimize=True)
+            logger.info(f"✓ Placeholder image created: {filename}")
+            
+            return f"/assets/images/{filename}"
         
     except requests.RequestException as e:
         logger.error(f"Image generation API error: {e}")
