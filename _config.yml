@@ -1,12 +1,10 @@
 title: "Bhaskar Daily AI News"
 description: "AI-curated bilingual (English & हिन्दी) news on politics, business, tech, finance & startups — updated every 8 hours."
 url: "https://www.kbhaskar.tech"
-theme: minima
 plugins: [jekyll-feed, jekyll-sitemap]
 markdown: kramdown
 paginate: 12
 paginate_path: "/page:num"
-minima: { skin: classic }
 
 # AdSense Configuration (replace with your actual client ID)
 # adsense_client_id: "ca-pub-XXXXXXXXXXXX"
