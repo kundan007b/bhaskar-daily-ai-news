@@ -9,7 +9,7 @@ paginate_path: "/page:num"
 # Google Analytics (replace with your actual tracking ID)
 # Get your tracking ID from: https://analytics.google.com
 # Format: G-XXXXXXXXXX (GA4) or UA-XXXXXXXXX-X (Universal Analytics)
-google_analytics: ""  # Add your Google Analytics ID here
+google_analytics: "G-7EVJ63K77Y"  # Google Analytics tracking ID
 
 # AdSense Configuration (replace with your actual client ID)
 # adsense_client_id: "ca-pub-XXXXXXXXXXXX"
