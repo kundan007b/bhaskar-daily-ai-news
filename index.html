@@ -10,6 +10,23 @@ layout: default
     <a href="#latest-news" class="btn btn-primary">📰 Latest News</a>
     <a href="{{ '/feed.xml' | relative_url }}" class="btn btn-secondary">📡 Subscribe RSS</a>
   </div>
+  
+  <!-- Quick Search Widget -->
+  <div style="max-width: 600px; margin: 2rem auto 0;">
+    <form action="{{ '/search' | relative_url }}" method="get" style="position: relative;">
+      <input 
+        type="text" 
+        name="q" 
+        placeholder="🔍 Search articles..." 
+        style="width: 100%; padding: 0.75rem 1.25rem; font-size: 1rem; border: 2px solid #dadce0; border-radius: 50px; outline: none; transition: all 0.3s;"
+        onfocus="this.style.borderColor='#1a73e8'; this.style.boxShadow='0 0 0 3px rgba(26,115,232,0.1)'"
+        onblur="this.style.borderColor='#dadce0'; this.style.boxShadow='none'"
+      >
+      <button type="submit" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #5f6368;">
+        →
+      </button>
+    </form>
+  </div>
 </div>
 
 <!-- Latest News Section -->

@@ -1,0 +1,18 @@
+---
+layout: null
+---
+[
+  {% for post in site.posts %}
+    {
+      "title": {{ post.title | jsonify }},
+      "url": {{ post.url | relative_url | jsonify }},
+      "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
+      "category": {{ post.category | jsonify }},
+      "keywords": {{ post.keywords | jsonify }},
+      "content": {{ post.content | strip_html | strip_newlines | truncate: 500 | jsonify }},
+      "body_hi": {{ post.body_hi | strip_html | strip_newlines | truncate: 500 | jsonify }},
+      "description": {{ post.description | jsonify }},
+      "image": {{ post.image | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]
