@@ -21,11 +21,27 @@ permalink: /privacy-policy
 
 ### Third-Party Services
 
+**Google Analytics:**
+- We use Google Analytics to track website traffic and user engagement
+- Google Analytics collects anonymous data about your visit
+- No personally identifiable information is collected
+- You can opt out using the [Google Analytics Opt-out Browser Add-on](https://tools.google.com/dlpage/gaoptout)
+
 **Google AdSense:**
 - We display advertisements through Google AdSense
 - Google and third-party vendors use cookies to serve ads based on your browsing history
 - These cookies enable personalized advertising
+- Google uses cookies to serve ads based on your prior visits to this website or other websites
+- Google's use of advertising cookies enables it and its partners to serve ads based on your visit to this site and/or other sites on the Internet
 - You may opt out of personalized advertising by visiting [Google Ads Settings](https://www.google.com/settings/ads)
+- You may also opt out of third-party vendors' use of cookies for personalized advertising by visiting [www.aboutads.info](http://www.aboutads.info/choices/)
+- For more information about Google's advertising practices, visit [Google's Privacy Policy](https://policies.google.com/privacy)
+
+**AI Content Generation:**
+- We use Google Gemini API and OpenAI API to generate news content
+- Article titles, summaries, and content are AI-generated
+- Images may be generated using AI image generation services
+- No user data is shared with AI services
 
 ## How We Use Information
 

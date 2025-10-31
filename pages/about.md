@@ -62,9 +62,9 @@ We're revolutionizing how Indians consume news by combining cutting-edge artific
     <li style="margin-bottom: 1rem;">✅ <strong>100% Free</strong> - No subscriptions, no paywalls</li>
     <li style="margin-bottom: 1rem;">✅ <strong>Bilingual Content</strong> - Read in English or हिन्दी with one click</li>
     <li style="margin-bottom: 1rem;">✅ <strong>AI-Powered</strong> - Unbiased, comprehensive analysis</li>
-    <li style="margin-bottom: 1rem;">✅ <strong>Regular Updates</strong> - Fresh news 3 times daily</li>
+    <li style="margin-bottom: 1rem;">✅ <strong>Regular Updates</strong> - Fresh news hourly (120 posts/day)</li>
     <li style="margin-bottom: 1rem;">✅ <strong>Mobile Optimized</strong> - Read anywhere, anytime</li>
-    <li>✅ <strong>No Ads (for now)</strong> - Clean, distraction-free reading</li>
+    <li>✅ <strong>Ad-Supported</strong> - Free content supported by ethical advertising</li>
   </ul>
 </div>
 
