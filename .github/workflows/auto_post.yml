@@ -1,0 +1,68 @@
+name: Auto Generate & Publish Posts
+on:
+  schedule: [{ cron: '30 0,8,16 * * *' }]
+  workflow_dispatch:
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    env: { GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Generate post
+        id: generate
+        run: |
+          python scripts/generate_post.py
+          if [ $? -ne 0 ]; then
+            echo "::error::Post generation failed"
+            exit 1
+          fi
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add assets/images/ || true
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No new content generated"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "New content ready to commit"
+          fi
+      
+      - name: Commit and push
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add _posts/ assets/images/
+          git commit -m "auto: new bilingual post $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Workflow failed at $(date -u)"
+          echo "Check logs for details"
+  
+  build_deploy:
+    needs: generate
+    if: success()
+    permissions: { contents: read, pages: write, id-token: write }
+    environment: { name: github-pages }
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/jekyll-build-pages@v1
+        with: { source: ".", destination: "./_site" }
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: "./_site" }
+      - uses: actions/deploy-pages@v4

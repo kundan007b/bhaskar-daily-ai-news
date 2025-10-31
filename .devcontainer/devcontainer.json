@@ -1,0 +1,6 @@
+{
+ "name": "AI News Blog",
+ "image": "mcr.microsoft.com/devcontainers/python:3.11",
+ "features": { "ghcr.io/devcontainers/features/ruby:1": { "version": "3.2" } },
+ "postCreateCommand": "pip install requests && gem install bundler jekyll"
+}

@@ -1,0 +1,34 @@
+title: "Bhaskar Daily AI News"
+description: "AI-curated bilingual (English & हिन्दी) news on politics, business, tech, finance & startups — updated every 8 hours."
+url: "https://www.kbhaskar.tech"
+theme: minima
+plugins: [jekyll-feed, jekyll-sitemap]
+markdown: kramdown
+paginate: 12
+paginate_path: "/page:num"
+minima: { skin: classic }
+
+# AdSense Configuration (replace with your actual client ID)
+# adsense_client_id: "ca-pub-XXXXXXXXXXXX"
+
+# Social & Contact
+# email: your-email@example.com
+# github_username: kundan007b
+# twitter_username: your_twitter
+
+defaults:
+  - scope: { path: "" }
+    values: { layout: "post" }
+
+include: [_includes/adsense.html, _includes/seo.html, _includes/lang-toggle.html]
+
+# Exclude from build
+exclude:
+  - requirements.txt
+  - scripts/
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - .gitignore
+  - .github/
+

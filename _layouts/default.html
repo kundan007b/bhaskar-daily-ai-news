@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>{{ page.title }} | {{ site.title }}</title>
+{%- include seo.html -%}{%- feed_meta -%}
+<link rel="sitemap" type="application/xml" title="Sitemap" href="{{ '/sitemap.xml' | relative_url }}"/>
+{%- include adsense.html -%}
+<style>
+body{max-width:1000px;margin:0 auto;padding:1.25rem;line-height:1.7;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans","Hind",sans-serif}
+footer{margin-top:2rem;color:#777;font-size:.95rem}
+</style></head><body>
+<header><h1><a href="{{ '/' | relative_url }}" style="text-decoration:none;color:inherit">{{ site.title }}</a></h1>
+<p>{{ site.description }}</p></header>
+<main>{{ content }}</main>
+<footer><p>© {{ site.time | date: "%Y" }} {{ site.title }} • Bilingual AI-curated news</p>
+<p><a href="/privacy-policy">Privacy</a> • <a href="/contact">Contact</a> • <a href="/about">About</a></p></footer>
+</body></html>

@@ -1,0 +1,31 @@
+---
+layout: default
+---
+<article>
+{% if page.image %}
+<img src="{{ page.image }}" 
+     alt="{{ page.image_alt | default: page.title }}" 
+     style="width:100%;max-width:1200px;height:auto;border-radius:14px;margin-bottom:10px;"
+     loading="lazy">
+{% endif %}
+<h1>{{ page.title }}</h1>
+<p style="color:#666;font-size:0.9rem;">
+  <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+  {% if page.category %} • <span class="tag">{{ page.category }}</span>{% endif %}
+</p>
+{%- include lang-toggle.html -%}
+<div class="lang-section" id="en">{{ content | markdownify }}</div>
+<div class="lang-section" id="hi" style="display:none;">{{ page.body_hi | markdownify }}</div>
+</article>
+
+<style>
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #e8f0fe;
+  color: #1a73e8;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+</style>
