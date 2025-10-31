@@ -1,0 +1,31 @@
+# robots.txt for Bhaskar Daily AI News
+# https://kbhaskar.tech
+
+User-agent: *
+Allow: /
+Disallow: /scripts/
+Disallow: /.github/
+Disallow: /assets/css/*.map
+
+# Special rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot-Image
+Allow: /assets/images/
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://kbhaskar.tech/sitemap.xml
+Sitemap: https://kbhaskar.tech/feed.xml
+
+# Host preference
+Host: https://kbhaskar.tech
