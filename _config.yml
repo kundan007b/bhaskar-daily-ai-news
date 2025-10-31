@@ -14,7 +14,7 @@ google_analytics: "G-7EVJ63K77Y"  # Google Analytics tracking ID
 # AdSense Configuration (replace with your actual client ID)
 # Get your AdSense ID from: https://www.google.com/adsense
 # Format: ca-pub-XXXXXXXXXXXXXXXX (16 digits)
-adsense_client_id: "ca-pub-XXXXXXXXXXXX"  # Replace with your actual AdSense ID
+adsense_client_id: "ca-pub-7621715019000629"  # Your AdSense Publisher ID
 adsense_enabled: true
 
 # Social & Contact
