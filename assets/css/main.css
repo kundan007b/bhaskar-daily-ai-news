@@ -615,7 +615,7 @@ body {
    PRINT STYLES
    ============================================ */
 @media print {
-    .site-header, .site-footer, .hero-section, .disclaimer-banner {
+    .site-header, .site-footer, .hero-section, .disclaimer-banner, .ad-container {
         display: none;
     }
     
@@ -623,4 +623,70 @@ body {
         box-shadow: none;
         page-break-inside: avoid;
     }
+}
+
+/* ============================================
+   ADSENSE AD CONTAINERS
+   ============================================ */
+.ad-container {
+    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-md);
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    background: var(--background);
+    border-radius: var(--border-radius);
+    position: relative;
+}
+
+.ad-container::before {
+    content: 'Advertisement';
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+}
+
+.ad-header {
+    margin: var(--spacing-md) auto;
+    max-width: 970px;
+}
+
+.ad-in-article {
+    margin: var(--spacing-xl) auto;
+    max-width: 728px;
+}
+
+.ad-sidebar {
+    margin: var(--spacing-md) 0;
+    max-width: 300px;
+    position: sticky;
+    top: 80px;
+}
+
+.ad-footer {
+    margin: var(--spacing-xl) auto var(--spacing-md);
+    max-width: 728px;
+}
+
+/* Responsive ad containers */
+@media (max-width: 768px) {
+    .ad-sidebar {
+        position: relative;
+        top: 0;
+        max-width: 100%;
+    }
+    
+    .ad-container {
+        padding: var(--spacing-sm);
+    }
+}
+
+/* AdSense responsive styles */
+.adsbygoogle {
+    display: block;
+    min-height: 50px;
 }

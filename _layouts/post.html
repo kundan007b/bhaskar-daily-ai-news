@@ -42,6 +42,9 @@ layout: default
            loading="lazy">
     </div>
   {% endif %}
+  
+  <!-- Top Article Ad -->
+  {%- include ad-in-article.html -%}
 
   <!-- Post Content (English) -->
   <div class="post-content lang-section" id="en" style="font-size: 1.1rem; line-height: 1.8; color: #202124;">
@@ -52,6 +55,9 @@ layout: default
   <div class="post-content lang-section" id="hi" style="display: none; font-size: 1.1rem; line-height: 1.8; color: #202124;">
     {{ page.body_hi | markdownify }}
   </div>
+  
+  <!-- Bottom Article Ad -->
+  {%- include ad-in-article.html -%}
 
   <!-- Keywords/Tags -->
   {% if page.keywords %}

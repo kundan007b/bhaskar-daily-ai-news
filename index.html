@@ -36,6 +36,9 @@ layout: default
     <span class="text-secondary">{{ site.posts.size }} Posts Total</span>
   </div>
   
+  <!-- Header Ad -->
+  {%- include ad-header.html -%}
+  
   <div class="post-grid">
     {% for post in site.posts limit:12 %}
       <article class="post-card fade-in">
@@ -85,6 +88,13 @@ layout: default
           </div>
         </div>
       </article>
+      
+      <!-- Insert ad after every 4 posts -->
+      {% if forloop.index == 4 or forloop.index == 8 %}
+        <div style="grid-column: 1 / -1;">
+          {%- include ad-in-article.html -%}
+        </div>
+      {% endif %}
     {% endfor %}
   </div>
   
