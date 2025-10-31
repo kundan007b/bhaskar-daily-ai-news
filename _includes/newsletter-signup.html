@@ -1,0 +1,146 @@
+<!-- Newsletter Signup Widget -->
+<div class="newsletter-signup" style="
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+">
+  <div style="text-align: center; margin-bottom: 1.5rem;">
+    <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">📧 Stay Updated!</h3>
+    <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.95rem;">
+      Get the latest news delivered to your inbox daily
+    </p>
+  </div>
+  
+  <form id="newsletter-form" style="display: flex; flex-direction: column; gap: 1rem;">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <input 
+        type="email" 
+        id="newsletter-email" 
+        name="email" 
+        placeholder="Enter your email address"
+        required
+        style="
+          flex: 1;
+          min-width: 200px;
+          padding: 0.75rem 1rem;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-radius: 8px;
+          background: rgba(255,255,255,0.1);
+          color: white;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+        "
+        onfocus="this.style.background='rgba(255,255,255,0.2)'; this.style.borderColor='rgba(255,255,255,0.5)';"
+        onblur="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.3)';"
+      />
+      <button 
+        type="submit"
+        style="
+          padding: 0.75rem 2rem;
+          background: white;
+          color: #667eea;
+          border: none;
+          border-radius: 8px;
+          font-weight: bold;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+        "
+        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)';"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+      >
+        Subscribe
+      </button>
+    </div>
+    
+    <div id="newsletter-message" style="display: none; padding: 0.75rem; border-radius: 8px; text-align: center; font-size: 0.9rem;"></div>
+    
+    <p style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin: 0; text-align: center;">
+      🔒 We respect your privacy. Unsubscribe anytime. Read our <a href="/privacy-policy" style="color: white; text-decoration: underline;">Privacy Policy</a>
+    </p>
+  </form>
+</div>
+
+<style>
+  #newsletter-email::placeholder {
+    color: rgba(255,255,255,0.6);
+  }
+  
+  @media (max-width: 600px) {
+    .newsletter-signup {
+      padding: 1.5rem;
+    }
+    
+    .newsletter-signup h3 {
+      font-size: 1.25rem;
+    }
+    
+    #newsletter-form > div {
+      flex-direction: column;
+    }
+    
+    #newsletter-form button {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    var email = document.getElementById('newsletter-email').value;
+    var messageDiv = document.getElementById('newsletter-message');
+    
+    // Simple email validation
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      messageDiv.style.display = 'block';
+      messageDiv.style.background = 'rgba(234, 67, 53, 0.9)';
+      messageDiv.textContent = '❌ Please enter a valid email address';
+      return;
+    }
+    
+    // For now, we'll store in localStorage (can be replaced with actual email service integration later)
+    try {
+      var subscribers = JSON.parse(localStorage.getItem('newsletter_subscribers') || '[]');
+      
+      if (subscribers.includes(email)) {
+        messageDiv.style.display = 'block';
+        messageDiv.style.background = 'rgba(251, 188, 5, 0.9)';
+        messageDiv.textContent = '⚠️ This email is already subscribed';
+      } else {
+        subscribers.push(email);
+        localStorage.setItem('newsletter_subscribers', JSON.stringify(subscribers));
+        
+        messageDiv.style.display = 'block';
+        messageDiv.style.background = 'rgba(52, 168, 83, 0.9)';
+        messageDiv.textContent = '✅ Success! You\'re now subscribed to our daily newsletter';
+        
+        document.getElementById('newsletter-email').value = '';
+        
+        // Optional: Send to Google Form or email service
+        // submitToEmailService(email);
+      }
+    } catch (error) {
+      messageDiv.style.display = 'block';
+      messageDiv.style.background = 'rgba(234, 67, 53, 0.9)';
+      messageDiv.textContent = '❌ An error occurred. Please try again';
+    }
+    
+    // Hide message after 5 seconds
+    setTimeout(function() {
+      messageDiv.style.display = 'none';
+    }, 5000);
+  });
+  
+  // Optional function to integrate with email service (Mailchimp, SendGrid, etc.)
+  // function submitToEmailService(email) {
+  //   // Add your email service integration here
+  //   // Example: POST to Mailchimp, SendGrid, ConvertKit, etc.
+  // }
+</script>

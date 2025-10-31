@@ -218,15 +218,23 @@ def optimize_image(img: Image.Image, max_width: int = MAX_IMAGE_WIDTH) -> Image.
     Returns:
         Optimized PIL Image
     """
+    # Resize if necessary
     if img.width > max_width:
         ratio = max_width / img.width
         new_height = int(img.height * ratio)
         img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
         logger.info(f"✓ Image resized to {max_width}x{new_height}")
     
-    # Convert to RGB if necessary
-    if img.mode in ('RGBA', 'P'):
-        img = img.convert('RGB')
+    # Convert to RGB if necessary (required for JPEG/WebP)
+    if img.mode in ('RGBA', 'P', 'LA', 'L'):
+        # Create white background for transparent images
+        rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+        if img.mode == 'RGBA' or img.mode == 'LA':
+            rgb_img.paste(img, mask=img.split()[-1])  # Use alpha channel as mask
+        else:
+            rgb_img.paste(img)
+        img = rgb_img
+        logger.info("✓ Image converted to RGB")
     
     return img
 

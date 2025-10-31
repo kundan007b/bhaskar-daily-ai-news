@@ -44,10 +44,12 @@
             
             <nav class="site-nav" id="mainNav">
                 <a href="{{ '/' | relative_url }}" class="nav-link">Home</a>
-                <a href="{{ '/about' | relative_url }}" class="nav-link">About</a>
-                <a href="{{ '/contact' | relative_url }}" class="nav-link">Contact</a>
+                <a href="{{ '/politics' | relative_url }}" class="nav-link">Politics</a>
+                <a href="{{ '/business' | relative_url }}" class="nav-link">Business</a>
+                <a href="{{ '/technology' | relative_url }}" class="nav-link">Technology</a>
+                <a href="{{ '/finance' | relative_url }}" class="nav-link">Finance</a>
+                <a href="{{ '/startups' | relative_url }}" class="nav-link">Startups</a>
                 <a href="{{ '/search' | relative_url }}" class="nav-link">🔍 Search</a>
-                <a href="{{ '/feed.xml' | relative_url }}" class="nav-link">RSS</a>
                 <button class="lang-toggle" onclick="toggleLanguage()">
                     <span id="lang-text">हिन्दी</span>
                 </button>
@@ -68,6 +70,13 @@
     <!-- Main Content -->
     <main class="main-container">
         {{ content }}
+        
+        <!-- Newsletter Signup (before footer) -->
+        {% if page.layout != 'post' %}
+        <div style="max-width: 600px; margin: 3rem auto;">
+            {%- include newsletter-signup.html -%}
+        </div>
+        {% endif %}
     </main>
 
     <!-- Footer -->
@@ -86,11 +95,11 @@
             <div class="footer-section">
                 <h3>Categories</h3>
                 <ul>
-                    <li><a href="#politics">Politics</a></li>
-                    <li><a href="#business">Business</a></li>
-                    <li><a href="#technology">Technology</a></li>
-                    <li><a href="#finance">Finance</a></li>
-                    <li><a href="#startups">Startups</a></li>
+                    <li><a href="{{ '/politics' | relative_url }}">🏛️ Politics</a></li>
+                    <li><a href="{{ '/business' | relative_url }}">💼 Business</a></li>
+                    <li><a href="{{ '/technology' | relative_url }}">💻 Technology</a></li>
+                    <li><a href="{{ '/finance' | relative_url }}">💰 Finance</a></li>
+                    <li><a href="{{ '/startups' | relative_url }}">🚀 Startups</a></li>
                 </ul>
             </div>
             
@@ -98,6 +107,7 @@
                 <h3>Quick Links</h3>
                 <ul>
                     <li><a href="{{ '/about' | relative_url }}">About Us</a></li>
+                    <li><a href="{{ '/faq' | relative_url }}">FAQ</a></li>
                     <li><a href="{{ '/contact' | relative_url }}">Contact</a></li>
                     <li><a href="{{ '/privacy-policy' | relative_url }}">Privacy Policy</a></li>
                     <li><a href="{{ '/feed.xml' | relative_url }}">RSS Feed</a></li>

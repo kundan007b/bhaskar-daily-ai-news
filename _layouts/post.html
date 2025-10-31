@@ -3,6 +3,9 @@ layout: default
 ---
 
 <article class="post" style="max-width: 800px; margin: 0 auto;">
+  <!-- Breadcrumbs -->
+  {%- include breadcrumbs.html -%}
+  
   <!-- Post Header -->
   <header class="post-header" style="margin-bottom: 2rem;">
     {% if page.category %}
@@ -76,26 +79,76 @@ layout: default
 
   <!-- Social Share -->
   <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
-    <h3 style="margin-bottom: 1rem; color: #202124;">Share this article:</h3>
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <h3 style="margin-bottom: 1rem; color: #202124;">📤 Share this article:</h3>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
       <a href="https://twitter.com/intent/tweet?url={{ page.url | absolute_url | url_encode }}&text={{ page.title | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none;">
+         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
         🐦 Twitter
       </a>
       <a href="https://www.facebook.com/sharer/sharer.php?u={{ page.url | absolute_url | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none;">
+         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
         📘 Facebook
       </a>
       <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none;">
+         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
         💼 LinkedIn
       </a>
-      <a href="whatsapp://send?text={{ page.title | url_encode }}%20{{ page.url | absolute_url | url_encode }}" 
-         data-action="share/whatsapp/share" class="btn btn-secondary" style="text-decoration: none;">
+      <a href="https://api.whatsapp.com/send?text={{ page.title | url_encode }}%20{{ page.url | absolute_url | url_encode }}" 
+         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
         💬 WhatsApp
       </a>
+      <a href="https://telegram.me/share/url?url={{ page.url | absolute_url | url_encode }}&text={{ page.title | url_encode }}" 
+         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
+        ✈️ Telegram
+      </a>
+      <button onclick="copyToClipboard('{{ page.url | absolute_url }}')" class="btn btn-secondary" style="flex: 1; min-width: 140px; text-align: center; cursor: pointer;">
+        🔗 Copy Link
+      </button>
     </div>
+    <p id="copy-notification" style="display: none; margin-top: 0.5rem; color: #34a853; font-size: 0.9rem; text-align: center;">
+      ✓ Link copied to clipboard!
+    </p>
   </div>
+
+  <script>
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          showCopyNotification();
+        }, function() {
+          fallbackCopyToClipboard(text);
+        });
+      } else {
+        fallbackCopyToClipboard(text);
+      }
+    }
+    
+    function fallbackCopyToClipboard(text) {
+      var textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.top = 0;
+      textArea.style.left = 0;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showCopyNotification();
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+      document.body.removeChild(textArea);
+    }
+    
+    function showCopyNotification() {
+      var notification = document.getElementById('copy-notification');
+      notification.style.display = 'block';
+      setTimeout(function() {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+  </script>
 
   <!-- Navigation -->
   <nav style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #dadce0; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
@@ -119,4 +172,12 @@ layout: default
       <span></span>
     {% endif %}
   </nav>
+  
+  <!-- Related Posts -->
+  {%- include related-posts.html -%}
+  
+  <!-- Newsletter Signup -->
+  <div style="margin-top: 3rem;">
+    {%- include newsletter-signup.html -%}
+  </div>
 </article>

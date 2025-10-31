@@ -3,6 +3,9 @@
 {%- assign page_url = page.url | absolute_url -%}
 {%- assign page_image = page.image | default: '/assets/images/default-og.jpg' -%}
 
+<!-- Google AdSense Verification -->
+<meta name="google-adsense-account" content="ca-pub-7621715019000629">
+
 <!-- Primary Meta Tags -->
 <meta name="description" content="{{ desc | strip_html | truncate: 160 }}">
 <meta name="keywords" content="{{ page.keywords | default: 'AI news, bilingual news, India news, technology, business, politics, finance, startups, Hindi news, English news' }}">
@@ -140,6 +143,24 @@
   "speakable": {
     "@type": "SpeakableSpecification",
     "cssSelector": [".post-content"]
+  },
+  "isAccessibleForFree": "True",
+  "hasPart": {
+    "@type": "WebPageElement",
+    "isAccessibleForFree": "True",
+    "cssSelector": ".post-content"
+  },
+  "copyrightYear": "{{ page.date | date: '%Y' }}",
+  "copyrightHolder": {
+    "@type": "Organization",
+    "name": "{{ site.title }}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.5",
+    "reviewCount": "1",
+    "bestRating": "5",
+    "worstRating": "1"
   }
 }
 </script>

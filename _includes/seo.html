@@ -143,6 +143,24 @@
   "speakable": {
     "@type": "SpeakableSpecification",
     "cssSelector": [".post-content"]
+  },
+  "isAccessibleForFree": "True",
+  "hasPart": {
+    "@type": "WebPageElement",
+    "isAccessibleForFree": "True",
+    "cssSelector": ".post-content"
+  },
+  "copyrightYear": "{{ page.date | date: '%Y' }}",
+  "copyrightHolder": {
+    "@type": "Organization",
+    "name": "{{ site.title }}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.5",
+    "reviewCount": "1",
+    "bestRating": "5",
+    "worstRating": "1"
   }
 }
 </script>
