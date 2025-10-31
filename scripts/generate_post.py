@@ -239,6 +239,51 @@ def optimize_image(img: Image.Image, max_width: int = MAX_IMAGE_WIDTH) -> Image.
     return img
 
 
+def truncate_text(text: Optional[str], max_len: int) -> Optional[str]:
+    """
+    Truncate text to max_len, preferring a nearby sentence boundary.
+
+    Args:
+        text: Input string (or None)
+        max_len: Maximum allowed length
+
+    Returns:
+        Truncated string (or original if already within bounds)
+    """
+    if not text:
+        return text
+    if len(text) <= max_len:
+        return text
+    # Prefer truncating at a natural boundary close to the limit
+    for sep in [". ", "! ", "? ", "\n"]:
+        idx = text.rfind(sep, 0, max_len)
+        if idx != -1 and idx > max_len - 120:
+            return text[: idx + len(sep)].strip()
+    return text[:max_len].rstrip() + "..."
+
+
+def truncate_fields(data: Dict) -> Dict:
+    """
+    Apply safe truncation to fields that have max length constraints
+    before schema validation or writing.
+
+    Note: Limits align with POST_SCHEMA and SEO norms.
+    """
+    limits = {
+        "title_en": 200,
+        "title_hi": 200,
+        "meta_desc_en": 160,
+        "meta_desc_hi": 160,
+        # Cap keywords length generously to avoid excessive meta size
+        "keywords_en": 300,
+        "keywords_hi": 300,
+    }
+    for key, max_len in limits.items():
+        if key in data and isinstance(data[key], str):
+            data[key] = truncate_text(data[key], max_len)
+    return data
+
+
 def prompt(topic: str) -> str:
     """
     Generate prompt for content creation
@@ -438,6 +483,9 @@ def main():
                 logger.info("Generating text content...")
                 content_prompt = prompt(topic)
                 data = g_text(content_prompt)
+                # Ensure fields with max length constraints are truncated
+                # before schema validation to avoid length errors
+                data = truncate_fields(data)
                 
                 # Validate JSON schema
                 try:
@@ -462,7 +510,7 @@ def main():
                 logger.info("Generating image...")
                 img_path = g_image(topic)
                 
-                # Write post
+                # Write post (fields already truncated where applicable)
                 logger.info("Writing post file...")
                 write_post(data, img_path, topic)
                 
