@@ -55,7 +55,6 @@ jobs:
   
   build_deploy:
     needs: generate
-    if: success()
     permissions:
       contents: read
       pages: write
