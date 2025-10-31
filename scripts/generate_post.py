@@ -381,44 +381,81 @@ title_hi: "{data['title_hi']}"
 
 
 def main():
-    """Main execution function"""
+    """Main execution function - generates posts for all categories"""
     try:
-        # Select topic based on time
-        topic_index = int(time.time()) % len(TOPICS)
-        topic = TOPICS[topic_index]
-        logger.info(f"📰 Generating post for topic: {topic}")
+        total_topics = len(TOPICS)
+        successful_posts = 0
+        failed_posts = 0
         
-        # Generate content
-        logger.info("Generating text content...")
-        content_prompt = prompt(topic)
-        data = g_text(content_prompt)
+        logger.info(f"📰 Starting hourly post generation for all {total_topics} categories")
+        logger.info("=" * 60)
         
-        # Validate JSON schema
-        try:
-            validate(instance=data, schema=POST_SCHEMA)
-            logger.info("✓ JSON schema validated")
-        except ValidationError as e:
-            logger.error(f"JSON validation failed: {e.message}")
+        # Generate posts for each topic/category
+        for idx, topic in enumerate(TOPICS, 1):
+            try:
+                logger.info(f"\n[{idx}/{total_topics}] Processing: {topic}")
+                logger.info("-" * 60)
+                
+                # Generate content
+                logger.info("Generating text content...")
+                content_prompt = prompt(topic)
+                data = g_text(content_prompt)
+                
+                # Validate JSON schema
+                try:
+                    validate(instance=data, schema=POST_SCHEMA)
+                    logger.info("✓ JSON schema validated")
+                except ValidationError as e:
+                    logger.error(f"JSON validation failed: {e.message}")
+                    failed_posts += 1
+                    continue
+                
+                # Validate content quality
+                validation_errors = validate_content(data)
+                if validation_errors:
+                    logger.error("Content validation failed:")
+                    for error in validation_errors:
+                        logger.error(f"  - {error}")
+                    failed_posts += 1
+                    continue
+                logger.info("✓ Content quality validated")
+                
+                # Generate image
+                logger.info("Generating image...")
+                img_path = g_image(topic)
+                
+                # Write post
+                logger.info("Writing post file...")
+                write_post(data, img_path, topic)
+                
+                logger.info(f"✓ Post [{idx}/{total_topics}] completed successfully!")
+                successful_posts += 1
+                
+                # Add a small delay between posts to avoid rate limiting
+                if idx < total_topics:
+                    logger.info("Waiting 2 seconds before next post...")
+                    time.sleep(2)
+                
+            except KeyboardInterrupt:
+                logger.info("Operation cancelled by user")
+                sys.exit(130)
+            except Exception as e:
+                logger.error(f"Error generating post for '{topic}': {e}", exc_info=True)
+                failed_posts += 1
+                continue
+        
+        # Summary
+        logger.info("\n" + "=" * 60)
+        logger.info("🎉 Hourly post generation completed!")
+        logger.info(f"✓ Successful: {successful_posts}/{total_topics}")
+        if failed_posts > 0:
+            logger.warning(f"✗ Failed: {failed_posts}/{total_topics}")
+        logger.info("=" * 60)
+        
+        # Exit with error if all posts failed
+        if successful_posts == 0:
+            logger.error("All posts failed to generate")
             sys.exit(1)
-        
-        # Validate content quality
-        validation_errors = validate_content(data)
-        if validation_errors:
-            logger.error("Content validation failed:")
-            for error in validation_errors:
-                logger.error(f"  - {error}")
-            sys.exit(1)
-        logger.info("✓ Content quality validated")
-        
-        # Generate image
-        logger.info("Generating image...")
-        img_path = g_image(topic)
-        
-        # Write post
-        logger.info("Writing post file...")
-        write_post(data, img_path, topic)
-        
-        logger.info("🎉 Post generation completed successfully!")
         
     except KeyboardInterrupt:
         logger.info("Operation cancelled by user")
