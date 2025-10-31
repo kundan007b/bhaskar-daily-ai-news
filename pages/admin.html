@@ -1,0 +1,309 @@
+---
+layout: default
+title: Admin
+permalink: /admin/
+description: Private admin panel to create posts
+---
+
+<meta name="robots" content="noindex, nofollow">
+
+<div style="max-width: 980px; margin: 0 auto;">
+  <h1 style="margin: 1.5rem 0;">🔒 Admin Panel</h1>
+
+  <!-- Login Panel -->
+  <div id="login-panel" style="background: #f8f9fa; padding: 1.25rem; border-radius: 12px; border: 1px solid #e0e3e7;">
+    <h2 style="margin-top: 0;">Sign in</h2>
+    <p style="color:#5f6368; margin-top: 0.25rem;">Enter your admin credentials to continue</p>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem; max-width: 420px;">
+      <label>
+        <div style="font-size: 0.95rem; color:#5f6368;">Username</div>
+        <input id="admin-username" type="text" placeholder="kb007" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label>
+        <div style="font-size: 0.95rem; color:#5f6368;">Password</div>
+        <input id="admin-password" type="password" placeholder="••••••••" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <button id="login-btn" class="btn btn-primary" style="width: fit-content;">Sign in</button>
+      <div id="login-msg" style="display:none; color:#ea4335; font-size:0.95rem;">Invalid credentials</div>
+      <p style="color:#5f6368; font-size:0.85rem; margin:0.5rem 0 0;">Note: This lightweight login is client-side only. For stronger security, use GitHub OAuth or a server-side auth flow.</p>
+    </div>
+  </div>
+
+  <!-- Admin Form -->
+  <div id="admin-panel" style="display:none; margin-top: 1.5rem; background: #ffffff; padding: 1.25rem; border-radius: 12px; border: 1px solid #e0e3e7;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+      <h2 style="margin: 0;">✍️ Create New Post</h2>
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <input id="gh-token" type="password" placeholder="GitHub Personal Access Token (repo scope)" style="min-width:320px; padding:0.5rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+        <button id="logout-btn" class="btn btn-secondary">Sign out</button>
+      </div>
+    </div>
+    <p style="color:#5f6368; margin:0.25rem 0 1rem;">Your token is used in your browser to commit files via GitHub API. It is not stored on the server.</p>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
+      <label>
+        <div>Title (English)</div>
+        <input id="title_en" type="text" placeholder="Enter English title" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label>
+        <div>Title (Hindi)</div>
+        <input id="title_hi" type="text" placeholder="हिन्दी शीर्षक" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label>
+        <div>Category</div>
+        <select id="category" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+          <option>Politics</option>
+          <option>Business</option>
+          <option>Technology</option>
+          <option>Finance</option>
+          <option>Startups</option>
+        </select>
+      </label>
+      <label>
+        <div>Date</div>
+        <input id="post_date" type="date" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label style="grid-column: 1 / -1;">
+        <div>Meta Description (English, max 160)</div>
+        <input id="meta_desc_en" type="text" maxlength="160" placeholder="SEO description in English" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label style="grid-column: 1 / -1;">
+        <div>Meta Description (Hindi, max 160)</div>
+        <input id="meta_desc_hi" type="text" maxlength="160" placeholder="SEO विवरण (हिन्दी)" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label>
+        <div>Keywords (English, comma-separated)</div>
+        <input id="keywords_en" type="text" placeholder="ai, india, news, policy" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label>
+        <div>Keywords (Hindi, comma-separated)</div>
+        <input id="keywords_hi" type="text" placeholder="एआई, भारत, समाचार" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label style="grid-column: 1 / -1;">
+        <div>Featured Image</div>
+        <input id="image_file" type="file" accept="image/*" style="width:100%; padding:0.4rem 0.75rem; border:1px solid #dadce0; border-radius:8px; background:#fff;">
+      </label>
+      <label style="grid-column: 1 / -1;">
+        <div>Image Alt Text</div>
+        <input id="image_alt" type="text" placeholder="Describe the image" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
+      </label>
+      <label style="grid-column: 1 / -1;">
+        <div>Content (English, Markdown)</div>
+        <textarea id="content_en" rows="12" placeholder="# Heading\nWrite your content here..." style="width:100%; padding:0.75rem; border:1px solid #dadce0; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"></textarea>
+      </label>
+      <label style="grid-column: 1 / -1;">
+        <div>Content (Hindi, Markdown)</div>
+        <textarea id="content_hi" rows="12" placeholder="# शीर्षक\nअपनी सामग्री यहाँ लिखें..." style="width:100%; padding:0.75rem; border:1px solid #dadce0; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"></textarea>
+      </label>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; margin-top: 1rem; flex-wrap:wrap;">
+      <button id="submit-post" class="btn btn-primary">Publish Post</button>
+      <button id="reset-form" class="btn btn-secondary">Reset</button>
+      <span id="status" style="align-self:center; color:#5f6368;"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Basic login (client-side only) ---
+  const USER = 'kb007';
+  const PASS = 'Kundan@20';
+  const loginPanel = document.getElementById('login-panel');
+  const adminPanel = document.getElementById('admin-panel');
+  const loginBtn = document.getElementById('login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const loginMsg = document.getElementById('login-msg');
+
+  function setAuth(state){
+    if(state){
+      localStorage.setItem('admin_auth','1');
+      loginPanel.style.display='none';
+      adminPanel.style.display='block';
+    } else {
+      localStorage.removeItem('admin_auth');
+      loginPanel.style.display='block';
+      adminPanel.style.display='none';
+    }
+  }
+  if(localStorage.getItem('admin_auth')==='1') setAuth(true);
+
+  loginBtn.addEventListener('click', ()=>{
+    const u = document.getElementById('admin-username').value.trim();
+    const p = document.getElementById('admin-password').value;
+    if(u === USER && p === PASS){
+      loginMsg.style.display='none';
+      setAuth(true);
+    } else {
+      loginMsg.style.display='block';
+    }
+  });
+  logoutBtn.addEventListener('click', ()=> setAuth(false));
+
+  // --- Helpers ---
+  const OWNER = 'kundan007b';
+  const REPO = 'bhaskar-daily-ai-news';
+  const BRANCH = 'main';
+
+  function slugify(s){
+    return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60);
+  }
+
+  function base64EncodeUnicode(str){
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function base64FromArrayBuffer(buffer){
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for(let i=0; i<len; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  async function githubGet(path, token){
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    return res;
+  }
+  async function githubPut(path, contentBase64, message, token, sha){
+    const body = { message, content: contentBase64, branch: BRANCH };
+    if(sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    return res;
+  }
+
+  function indentBlock(text){
+    return text.split('\n').map(l => '  ' + l).join('\n');
+  }
+
+  function today(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const da = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${da}`;
+  }
+  const dateInput = document.getElementById('post_date');
+  if(dateInput) dateInput.value = today();
+
+  // --- Submit handler ---
+  const submitBtn = document.getElementById('submit-post');
+  const resetBtn = document.getElementById('reset-form');
+  const statusEl = document.getElementById('status');
+
+  resetBtn.addEventListener('click', ()=>{
+    document.getElementById('title_en').value = '';
+    document.getElementById('title_hi').value = '';
+    document.getElementById('meta_desc_en').value = '';
+    document.getElementById('meta_desc_hi').value = '';
+    document.getElementById('keywords_en').value = '';
+    document.getElementById('keywords_hi').value = '';
+    document.getElementById('content_en').value = '';
+    document.getElementById('content_hi').value = '';
+    document.getElementById('image_file').value = '';
+    document.getElementById('image_alt').value = '';
+    statusEl.textContent = '';
+  });
+
+  submitBtn.addEventListener('click', async ()=>{
+    statusEl.style.color = '#5f6368';
+    statusEl.textContent = 'Preparing...';
+
+    const token = document.getElementById('gh-token').value.trim();
+    if(!token){ statusEl.style.color='#ea4335'; statusEl.textContent='Enter your GitHub PAT (repo scope)'; return; }
+
+    const title_en = document.getElementById('title_en').value.trim();
+    const title_hi = document.getElementById('title_hi').value.trim();
+    const category = document.getElementById('category').value;
+    const dateStr = document.getElementById('post_date').value || today();
+    const meta_desc_en = document.getElementById('meta_desc_en').value.trim();
+    const meta_desc_hi = document.getElementById('meta_desc_hi').value.trim();
+    const keywords_en = document.getElementById('keywords_en').value.trim();
+    const keywords_hi = document.getElementById('keywords_hi').value.trim();
+    const content_en = document.getElementById('content_en').value;
+    const content_hi = document.getElementById('content_hi').value;
+    const image_file = document.getElementById('image_file').files[0];
+    const image_alt = document.getElementById('image_alt').value.trim() || `News illustration for ${title_en}`;
+
+    if(!title_en || !content_en){ statusEl.style.color='#ea4335'; statusEl.textContent='Title (EN) and Content (EN) are required'; return; }
+
+    // Upload image first (optional)
+    let imagePath = '';
+    try{
+      if(image_file){
+        statusEl.textContent = 'Uploading image...';
+        const arrayBuffer = await image_file.arrayBuffer();
+        const imgB64 = base64FromArrayBuffer(arrayBuffer);
+        const ext = (image_file.name.split('.').pop() || 'jpg').toLowerCase();
+        const imgName = `${dateStr}-${slugify(title_en)}-${Date.now().toString().slice(-6)}.${ext}`;
+        const imgRepoPath = `assets/images/${imgName}`;
+        const res = await githubPut(imgRepoPath, imgB64, `admin: upload image ${imgName}`, token);
+        if(!res.ok){
+          const t = await res.text();
+          throw new Error(`Image upload failed: ${res.status} ${t}`);
+        }
+        imagePath = `/assets/images/${imgName}`;
+      }
+    }catch(err){
+      console.error(err);
+      statusEl.style.color = '#ea4335';
+      statusEl.textContent = 'Image upload failed. See console for details.';
+      return;
+    }
+
+    // Compose markdown post
+    statusEl.textContent = 'Creating post file...';
+    const slug = slugify(title_en);
+    const filename = `${dateStr}-${slug}.md`;
+    const fm = [
+      '---',
+      'layout: post',
+      `title: "${title_en.replace(/"/g,'\\"')}"`,
+      `category: "${category}"`,
+      `description: "${meta_desc_en.replace(/"/g,'\\"')}"`,
+      `keywords: "${(keywords_en + (keywords_hi? (', ' + keywords_hi) : '')).replace(/"/g,'\\"')}"`,
+      imagePath ? `image: ${imagePath}` : '',
+      `image_alt: "${image_alt.replace(/"/g,'\\"')}"`,
+      'body_hi: |',
+      indentBlock(content_hi || ''),
+      `meta_desc_hi: "${meta_desc_hi.replace(/"/g,'\\"')}"`,
+      `title_hi: "${title_hi.replace(/"/g,'\\"')}"`,
+      '---',
+      ''
+    ].filter(Boolean).join('\n');
+    const md = fm + (content_en || '') + '\n';
+
+    try{
+      const b64 = base64EncodeUnicode(md);
+      const repoPath = `_posts/${filename}`;
+      // Ensure unique: if exists, append a suffix
+      let pathToUse = repoPath;
+      let exists = await githubGet(repoPath, token);
+      if(exists && exists.status === 200){
+        const altPath = `_posts/${dateStr}-${slug}-${Date.now().toString().slice(-5)}.md`;
+        pathToUse = altPath;
+      }
+      const res = await githubPut(pathToUse, b64, `admin: publish post ${filename}`, token);
+      if(!res.ok){
+        const t = await res.text();
+        throw new Error(`Post create failed: ${res.status} ${t}`);
+      }
+      statusEl.style.color = '#34a853';
+      statusEl.textContent = '✅ Post published successfully.';
+      alert('Post created! It will appear on the site after Pages build completes.');
+    }catch(err){
+      console.error(err);
+      statusEl.style.color = '#ea4335';
+      statusEl.textContent = 'Post creation failed. See console for details.';
+    }
+  });
+</script>

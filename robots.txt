@@ -25,6 +25,9 @@ Crawl-delay: 1
 
 # Sitemap location
 Sitemap: https://kbhaskar.tech/sitemap.xml
+
+# Do not index admin panel
+Disallow: /admin/
 Sitemap: https://kbhaskar.tech/feed.xml
 
 # Host preference
