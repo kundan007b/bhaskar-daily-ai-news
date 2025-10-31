@@ -2,18 +2,120 @@
 layout: default
 ---
 
-<div class="home">
-  <h1 class="page-heading">Latest AI News</h1>
-  
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-        <h2>
-          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-        </h2>
-        <p>{{ post.description }}</p>
-      </li>
-    {% endfor %}
-  </ul>
+<!-- Hero Section -->
+<div class="hero-section">
+  <h1 class="hero-title">🌏 Bhaskar Daily AI News</h1>
+  <p class="hero-subtitle">AI-curated bilingual news • English & हिन्दी • Updated 3x daily</p>
+  <div class="hero-cta">
+    <a href="#latest-news" class="btn btn-primary">📰 Latest News</a>
+    <a href="{{ '/feed.xml' | relative_url }}" class="btn btn-secondary">📡 Subscribe RSS</a>
+  </div>
 </div>
+
+<!-- Latest News Section -->
+<section id="latest-news">
+  <div class="section-header">
+    <h2 class="section-title">Latest News</h2>
+    <span class="text-secondary">{{ site.posts.size }} Posts Total</span>
+  </div>
+  
+  <div class="post-grid">
+    {% for post in site.posts limit:12 %}
+      <article class="post-card fade-in">
+        <!-- Post Image -->
+        {% if post.image %}
+          <img src="{{ post.image | relative_url }}" alt="{{ post.image_alt | default: post.title | escape }}" class="post-image" loading="lazy">
+        {% else %}
+          <div class="post-image" style="background: linear-gradient(135deg, #1a73e8, #34a853); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+            📰
+          </div>
+        {% endif %}
+        
+        <!-- Post Content -->
+        <div class="post-content">
+          <!-- Meta Information -->
+          <div class="post-meta">
+            {% if post.category %}
+              <span class="post-category badge badge-{{ post.category | downcase }}">
+                {{ post.category }}
+              </span>
+            {% endif %}
+            <span class="post-date">
+              🗓️ {{ post.date | date: "%b %d, %Y" }}
+            </span>
+          </div>
+          
+          <!-- Title -->
+          <h3 class="post-title">
+            <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+          </h3>
+          
+          <!-- Excerpt -->
+          {% if post.description %}
+            <p class="post-excerpt">{{ post.description | escape }}</p>
+          {% else %}
+            <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 150 }}</p>
+          {% endif %}
+          
+          <!-- Footer -->
+          <div class="post-footer">
+            <a href="{{ post.url | relative_url }}" class="read-more">
+              Read more →
+            </a>
+            <span class="reading-time">
+              ⏱️ 5 min read
+            </span>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+  
+  {% if site.posts.size == 0 %}
+    <div style="text-align: center; padding: 3rem; background: #f8f9fa; border-radius: 12px;">
+      <h3 style="color: #5f6368;">No posts yet</h3>
+      <p style="color: #80868b;">New AI-generated posts will appear here automatically 3 times daily.</p>
+    </div>
+  {% endif %}
+</section>
+
+<!-- Categories Section -->
+<section style="margin-top: 3rem;">
+  <div class="section-header">
+    <h2 class="section-title">Browse by Category</h2>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+    <a href="#politics" style="text-decoration: none;">
+      <div style="background: rgba(234, 67, 53, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏛️</div>
+        <h3 style="color: #ea4335; margin: 0;">Politics</h3>
+      </div>
+    </a>
+    <a href="#business" style="text-decoration: none;">
+      <div style="background: rgba(26, 115, 232, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💼</div>
+        <h3 style="color: #1a73e8; margin: 0;">Business</h3>
+      </div>
+    </a>
+    <a href="#technology" style="text-decoration: none;">
+      <div style="background: rgba(52, 168, 83, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
+        <h3 style="color: #34a853; margin: 0;">Technology</h3>
+      </div>
+    </a>
+    <a href="#finance" style="text-decoration: none;">
+      <div style="background: rgba(251, 188, 4, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+        <h3 style="color: #f9ab00; margin: 0;">Finance</h3>
+      </div>
+    </a>
+    <a href="#startups" style="text-decoration: none;">
+      <div style="background: rgba(156, 39, 176, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+        <h3 style="color: #9c27b0; margin: 0;">Startups</h3>
+      </div>
+    </a>
+  </div>
+</section>
+
