@@ -9,6 +9,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-generate
+  cancel-in-progress: false
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -40,7 +44,7 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          git add assets/images/ || true
+          git add -A || true
           if git diff --quiet && git diff --cached --quiet; then
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "No new content generated"
@@ -49,14 +53,44 @@ jobs:
             echo "New content ready to commit"
           fi
       
-      - name: Commit and push
+      - name: Commit and push with rebase & retry
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          set -e
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Ensure we're on main and up-to-date before committing
+          git fetch origin main
+          git checkout -B main || true
+          git pull --rebase origin main || true
+
+          # Stage and commit
           git add _posts/ assets/images/
+          if git diff --cached --quiet; then
+            echo "No staged changes after rebase. Skipping commit."
+            exit 0
+          fi
           git commit -m "auto: new bilingual post $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git push
+
+          # Push with up to 3 retries to handle concurrent runs
+          n=0
+          until [ "$n" -ge 3 ]
+          do
+            if git push origin HEAD:main; then
+              echo "Push succeeded"
+              break
+            fi
+            n=$((n+1))
+            echo "Push failed (attempt $n). Rebase and retry after short sleep..."
+            git fetch origin main
+            git pull --rebase origin main || true
+            sleep 3
+          done
+          if [ "$n" -ge 3 ]; then
+            echo "::error::Failed to push after 3 attempts"
+            exit 1
+          fi
       
       - name: Notify on failure
         if: failure()
