@@ -2,308 +2,733 @@
 layout: default
 title: Admin
 permalink: /admin/
-description: Private admin panel to create posts
 ---
 
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex,nofollow">
+<style>
+  .admin-wrap{max-width:980px;margin:2rem auto;padding:1.5rem;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .row-1{display:grid;grid-template-columns:1fr;gap:1rem}
+  .field{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem}
+  .field label{font-weight:600;color:#374151}
+  .field input[type=text],.field input[type=date],.field input[type=password],.field textarea,.field select{
+    border:1px solid #d1d5db;border-radius:8px;padding:.6rem .75rem;font:inherit;background:#fff
+  }
+  textarea{min-height:180px}
+  .toolbar{display:flex;gap:.6rem;align-items:center;justify-content:space-between;margin:1rem 0}
+  .btn{appearance:none;border:0;border-radius:8px;padding:.6rem .9rem;font-weight:600;cursor:pointer}
+  .btn-primary{background:#1f2937;color:#fff}
+  .btn-ghost{background:#f3f4f6;color:#111827}
+  .btn-danger{background:#ef4444;color:#fff}
+  .note{font-size:.9rem;color:#6b7280}
+  .status{margin-top:.75rem;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;white-space:pre-wrap;background:#f9fafb;border:1px dashed #e5e7eb;border-radius:8px;padding:.6rem}
+  .tabs{display:flex;gap:.5rem;border-bottom:1px solid #e5e7eb;margin:.75rem 0}
+  .tab{padding:.5rem .75rem;border-radius:8px 8px 0 0;cursor:pointer}
+  .tab.active{background:#111827;color:#fff}
+  .panel{display:none}
+  .panel.active{display:block}
+  .preview{border:1px solid #e5e7eb;border-radius:8px;padding:1rem;max-height:480px;overflow:auto;background:#fff}
+  .danger{color:#b91c1c}
+  .post-card{border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:.75rem;display:grid;grid-template-columns:80px 1fr auto;gap:1rem;align-items:center;background:#fff}
+  .post-card:hover{background:#f9fafb}
+  .post-thumb{width:80px;height:60px;object-fit:cover;border-radius:6px;background:#e5e7eb}
+  .post-info h4{margin:0 0 .25rem;font-size:1rem}
+  .post-info p{margin:0;font-size:.85rem;color:#6b7280}
+  .post-actions{display:flex;gap:.5rem}
+  .btn-sm{padding:.4rem .6rem;font-size:.85rem}
+</style>
 
-<div style="max-width: 980px; margin: 0 auto;">
-  <h1 style="margin: 1.5rem 0;">🔒 Admin Panel</h1>
+<div class="admin-wrap">
+  <h1>Admin Panel</h1>
+  <p class="note">Login with your credentials, add content, preview, then Publish. Images are compressed client‑side before upload.</p>
 
-  <!-- Login Panel -->
-  <div id="login-panel" style="background: #f8f9fa; padding: 1.25rem; border-radius: 12px; border: 1px solid #e0e3e7;">
-    <h2 style="margin-top: 0;">Sign in</h2>
-    <p style="color:#5f6368; margin-top: 0.25rem;">Enter your admin credentials to continue</p>
-    <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem; max-width: 420px;">
-      <label>
-        <div style="font-size: 0.95rem; color:#5f6368;">Username</div>
-        <input id="admin-username" type="text" placeholder="kb007" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label>
-        <div style="font-size: 0.95rem; color:#5f6368;">Password</div>
-        <input id="admin-password" type="password" placeholder="••••••••" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <button id="login-btn" class="btn btn-primary" style="width: fit-content;">Sign in</button>
-      <div id="login-msg" style="display:none; color:#ea4335; font-size:0.95rem;">Invalid credentials</div>
-      <p style="color:#5f6368; font-size:0.85rem; margin:0.5rem 0 0;">Note: This lightweight login is client-side only. For stronger security, use GitHub OAuth or a server-side auth flow.</p>
+  <div id="loginBox" class="row-1">
+    <div class="field">
+      <label>Username</label>
+      <input id="u" type="text" placeholder="kb007">
     </div>
+    <div class="field">
+      <label>Password</label>
+      <input id="p" type="password" placeholder="••••••••">
+    </div>
+    <div class="toolbar">
+      <button id="loginBtn" class="btn btn-primary">Login</button>
+      <span class="note">After login, enter a GitHub token with <b>Contents: Read/Write</b> permission.</span>
+    </div>
+    <div id="loginMsg" class="status"></div>
   </div>
 
-  <!-- Admin Form -->
-  <div id="admin-panel" style="display:none; margin-top: 1.5rem; background: #ffffff; padding: 1.25rem; border-radius: 12px; border: 1px solid #e0e3e7;">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
-      <h2 style="margin: 0;">✍️ Create New Post</h2>
-      <div style="display:flex; gap:0.5rem; align-items:center;">
-        <input id="gh-token" type="password" placeholder="GitHub Personal Access Token (repo scope)" style="min-width:320px; padding:0.5rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-        <button id="logout-btn" class="btn btn-secondary">Sign out</button>
+  <div id="adminBox" style="display:none">
+    <div class="row">
+      <div class="field">
+        <label>GitHub Personal Access Token (repo contents: read/write)</label>
+        <input id="ghToken" type="password" placeholder="ghp_... or fine‑grained token">
+        <div class="note">Used only in your browser to write files via GitHub API. Not stored.</div>
+      </div>
+      <div class="field">
+        <label>Repository</label>
+        <input id="repo" type="text" value="kundan007b/bhaskar-daily-ai-news">
       </div>
     </div>
-    <p style="color:#5f6368; margin:0.25rem 0 1rem;">Your token is used in your browser to commit files via GitHub API. It is not stored on the server.</p>
 
-    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
-      <label>
-        <div>Title (English)</div>
-        <input id="title_en" type="text" placeholder="Enter English title" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label>
-        <div>Title (Hindi)</div>
-        <input id="title_hi" type="text" placeholder="हिन्दी शीर्षक" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label>
-        <div>Category</div>
-        <select id="category" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-          <option>Politics</option>
-          <option>Business</option>
-          <option>Technology</option>
-          <option>Finance</option>
-          <option>Startups</option>
-        </select>
-      </label>
-      <label>
-        <div>Date</div>
-        <input id="post_date" type="date" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label style="grid-column: 1 / -1;">
-        <div>Meta Description (English, max 160)</div>
-        <input id="meta_desc_en" type="text" maxlength="160" placeholder="SEO description in English" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label style="grid-column: 1 / -1;">
-        <div>Meta Description (Hindi, max 160)</div>
-        <input id="meta_desc_hi" type="text" maxlength="160" placeholder="SEO विवरण (हिन्दी)" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label>
-        <div>Keywords (English, comma-separated)</div>
-        <input id="keywords_en" type="text" placeholder="ai, india, news, policy" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label>
-        <div>Keywords (Hindi, comma-separated)</div>
-        <input id="keywords_hi" type="text" placeholder="एआई, भारत, समाचार" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label style="grid-column: 1 / -1;">
-        <div>Featured Image</div>
-        <input id="image_file" type="file" accept="image/*" style="width:100%; padding:0.4rem 0.75rem; border:1px solid #dadce0; border-radius:8px; background:#fff;">
-      </label>
-      <label style="grid-column: 1 / -1;">
-        <div>Image Alt Text</div>
-        <input id="image_alt" type="text" placeholder="Describe the image" style="width:100%; padding:0.6rem 0.75rem; border:1px solid #dadce0; border-radius:8px;">
-      </label>
-      <label style="grid-column: 1 / -1;">
-        <div>Content (English, Markdown)</div>
-        <textarea id="content_en" rows="12" placeholder="# Heading\nWrite your content here..." style="width:100%; padding:0.75rem; border:1px solid #dadce0; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"></textarea>
-      </label>
-      <label style="grid-column: 1 / -1;">
-        <div>Content (Hindi, Markdown)</div>
-        <textarea id="content_hi" rows="12" placeholder="# शीर्षक\nअपनी सामग्री यहाँ लिखें..." style="width:100%; padding:0.75rem; border:1px solid #dadce0; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"></textarea>
-      </label>
+    <div class="tabs">
+      <button class="tab active" data-tab="manager">Post Manager</button>
+      <button class="tab" data-tab="editor">New/Edit Post</button>
+      <button class="tab" data-tab="preview">Preview</button>
+      <button class="tab" data-tab="options">Options</button>
     </div>
 
-    <div style="display:flex; gap:0.75rem; margin-top: 1rem; flex-wrap:wrap;">
-      <button id="submit-post" class="btn btn-primary">Publish Post</button>
-      <button id="reset-form" class="btn btn-secondary">Reset</button>
-      <span id="status" style="align-self:center; color:#5f6368;"></span>
+    <div id="manager" class="panel active">
+      <div class="toolbar">
+        <h3 style="margin:0">All Posts</h3>
+        <button id="refreshPosts" class="btn btn-ghost">🔄 Refresh</button>
+      </div>
+      <div id="postsList" class="status">Loading posts...</div>
+    </div>
+
+    <div id="editor" class="panel">
+      <div class="toolbar">
+        <h3 style="margin:0"><span id="editorTitle">New Post</span></h3>
+        <button id="newPostBtn" class="btn btn-ghost">➕ New Post</button>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Title (English) *</label>
+          <input id="title_en" type="text" placeholder="Compelling headline">
+        </div>
+        <div class="field">
+          <label>Title (Hindi)</label>
+          <input id="title_hi" type="text" placeholder="हिंदी शीर्षक (वैकल्पिक)">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Body (English, Markdown) *</label>
+          <textarea id="body_en" placeholder="# Heading
+Write your article in Markdown..."></textarea>
+        </div>
+        <div class="field">
+          <label>Body (Hindi, Markdown)</label>
+          <textarea id="body_hi" placeholder="# शीर्षक
+यहाँ हिंदी सामग्री लिखें..."></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Meta Description (EN, ≤160)</label>
+          <input id="meta_desc_en" type="text" maxlength="160" placeholder="SEO description">
+        </div>
+        <div class="field">
+          <label>Meta Description (HI, ≤160)</label>
+          <input id="meta_desc_hi" type="text" maxlength="160" placeholder="SEO वर्णन">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Keywords (EN, comma-separated)</label>
+          <input id="keywords_en" type="text" placeholder="ai, india, technology">
+        </div>
+        <div class="field">
+          <label>Keywords (HI, comma-separated)</label>
+          <input id="keywords_hi" type="text" placeholder="कृत्रिम बुद्धिमत्ता, भारत, तकनीक">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Category *</label>
+          <select id="category">
+            <option>Technology</option>
+            <option>Business</option>
+            <option>Politics</option>
+            <option>Finance</option>
+            <option>Startups</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input id="date" type="date">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Featured Image</label>
+          <input id="image" type="file" accept="image/*">
+          <div class="note">Images are resized to 1200px width and saved as JPEG/WebP (85% quality).</div>
+          <div id="currentImage" style="margin-top:.5rem"></div>
+        </div>
+        <div class="field">
+          <label>Image Alt Text</label>
+          <input id="image_alt" type="text" placeholder="Describe the image for accessibility">
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div>
+          <button id="saveDraft" class="btn btn-ghost">Save Draft (local)</button>
+          <button id="clearDraft" class="btn btn-danger">Clear Draft</button>
+        </div>
+        <div>
+          <button id="publishBtn" class="btn btn-primary">Publish Post</button>
+        </div>
+      </div>
+      <div id="status" class="status"></div>
+    </div>
+
+    <div id="preview" class="panel">
+      <div id="previewBox" class="preview"></div>
+    </div>
+
+    <div id="options" class="panel">
+      <div class="field">
+        <label>Publish Mode</label>
+        <select id="publishMode">
+          <option value="main" selected>Commit to main</option>
+          <option value="pr">Create PR (fallback if main protected)</option>
+        </select>
+      </div>
+      <p class="note">If push to main is blocked, the tool will auto‑fallback to a feature branch and open a pull request.</p>
     </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-  // --- Basic login (client-side only) ---
-  const USER = 'kb007';
-  const PASS = 'Kundan@20';
-  const loginPanel = document.getElementById('login-panel');
-  const adminPanel = document.getElementById('admin-panel');
-  const loginBtn = document.getElementById('login-btn');
-  const logoutBtn = document.getElementById('logout-btn');
-  const loginMsg = document.getElementById('login-msg');
-
-  function setAuth(state){
-    if(state){
-      localStorage.setItem('admin_auth','1');
-      loginPanel.style.display='none';
-      adminPanel.style.display='block';
-    } else {
-      localStorage.removeItem('admin_auth');
-      loginPanel.style.display='block';
-      adminPanel.style.display='none';
-    }
-  }
-  if(localStorage.getItem('admin_auth')==='1') setAuth(true);
-
-  loginBtn.addEventListener('click', ()=>{
-    const u = document.getElementById('admin-username').value.trim();
-    const p = document.getElementById('admin-password').value;
-    if(u === USER && p === PASS){
-      loginMsg.style.display='none';
-      setAuth(true);
-    } else {
-      loginMsg.style.display='block';
-    }
-  });
-  logoutBtn.addEventListener('click', ()=> setAuth(false));
-
-  // --- Helpers ---
-  const OWNER = 'kundan007b';
-  const REPO = 'bhaskar-daily-ai-news';
-  const BRANCH = 'main';
-
-  function slugify(s){
-    return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60);
-  }
-
-  function base64EncodeUnicode(str){
-    return btoa(unescape(encodeURIComponent(str)));
-  }
-
-  function base64FromArrayBuffer(buffer){
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for(let i=0; i<len; i++) binary += String.fromCharCode(bytes[i]);
-    return btoa(binary);
-  }
-
-  async function githubGet(path, token){
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
-      headers: { 'Authorization': `token ${token}` }
-    });
-    return res;
-  }
-  async function githubPut(path, contentBase64, message, token, sha){
-    const body = { message, content: contentBase64, branch: BRANCH };
-    if(sha) body.sha = sha;
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    });
-    return res;
-  }
-
-  function indentBlock(text){
-    return text.split('\n').map(l => '  ' + l).join('\n');
-  }
-
-  function today(){
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const da = String(d.getDate()).padStart(2,'0');
-    return `${y}-${m}-${da}`;
-  }
-  const dateInput = document.getElementById('post_date');
-  if(dateInput) dateInput.value = today();
-
-  // --- Submit handler ---
-  const submitBtn = document.getElementById('submit-post');
-  const resetBtn = document.getElementById('reset-form');
-  const statusEl = document.getElementById('status');
-
-  resetBtn.addEventListener('click', ()=>{
-    document.getElementById('title_en').value = '';
-    document.getElementById('title_hi').value = '';
-    document.getElementById('meta_desc_en').value = '';
-    document.getElementById('meta_desc_hi').value = '';
-    document.getElementById('keywords_en').value = '';
-    document.getElementById('keywords_hi').value = '';
-    document.getElementById('content_en').value = '';
-    document.getElementById('content_hi').value = '';
-    document.getElementById('image_file').value = '';
-    document.getElementById('image_alt').value = '';
-    statusEl.textContent = '';
-  });
-
-  submitBtn.addEventListener('click', async ()=>{
-    statusEl.style.color = '#5f6368';
-    statusEl.textContent = 'Preparing...';
-
-    const token = document.getElementById('gh-token').value.trim();
-    if(!token){ statusEl.style.color='#ea4335'; statusEl.textContent='Enter your GitHub PAT (repo scope)'; return; }
-
-    const title_en = document.getElementById('title_en').value.trim();
-    const title_hi = document.getElementById('title_hi').value.trim();
-    const category = document.getElementById('category').value;
-    const dateStr = document.getElementById('post_date').value || today();
-    const meta_desc_en = document.getElementById('meta_desc_en').value.trim();
-    const meta_desc_hi = document.getElementById('meta_desc_hi').value.trim();
-    const keywords_en = document.getElementById('keywords_en').value.trim();
-    const keywords_hi = document.getElementById('keywords_hi').value.trim();
-    const content_en = document.getElementById('content_en').value;
-    const content_hi = document.getElementById('content_hi').value;
-    const image_file = document.getElementById('image_file').files[0];
-    const image_alt = document.getElementById('image_alt').value.trim() || `News illustration for ${title_en}`;
-
-    if(!title_en || !content_en){ statusEl.style.color='#ea4335'; statusEl.textContent='Title (EN) and Content (EN) are required'; return; }
-
-    // Upload image first (optional)
-    let imagePath = '';
-    try{
-      if(image_file){
-        statusEl.textContent = 'Uploading image...';
-        const arrayBuffer = await image_file.arrayBuffer();
-        const imgB64 = base64FromArrayBuffer(arrayBuffer);
-        const ext = (image_file.name.split('.').pop() || 'jpg').toLowerCase();
-        const imgName = `${dateStr}-${slugify(title_en)}-${Date.now().toString().slice(-6)}.${ext}`;
-        const imgRepoPath = `assets/images/${imgName}`;
-        const res = await githubPut(imgRepoPath, imgB64, `admin: upload image ${imgName}`, token);
-        if(!res.ok){
-          const t = await res.text();
-          throw new Error(`Image upload failed: ${res.status} ${t}`);
-        }
-        imagePath = `/assets/images/${imgName}`;
+  // --- auth ---
+  const creds = { user: "kb007", pass: "Kundan@20" };
+  const els = {
+    loginBox: document.getElementById("loginBox"),
+    adminBox: document.getElementById("adminBox"),
+    loginMsg: document.getElementById("loginMsg"),
+    status: document.getElementById("status"),
+    previewBox: document.getElementById("previewBox"),
+    date: document.getElementById("date"),
+  };
+  document.getElementById("loginBtn").onclick = () => {
+    const u = document.getElementById("u").value.trim();
+    const p = document.getElementById("p").value;
+    if (u === creds.user && p === creds.pass) {
+      els.loginMsg.textContent = "Login successful.";
+      els.loginBox.style.display = "none";
+      els.adminBox.style.display = "block";
+      if (!els.date.value) {
+        els.date.valueAsDate = new Date();
       }
-    }catch(err){
-      console.error(err);
-      statusEl.style.color = '#ea4335';
-      statusEl.textContent = 'Image upload failed. See console for details.';
+      loadDraft();
+    } else {
+      els.loginMsg.textContent = "Invalid credentials.";
+    }
+  };
+
+  // --- utils ---
+  const sleep = (ms)=> new Promise(r=>setTimeout(r, ms));
+  const todayISO = () => new Date().toISOString().slice(0,10);
+  const slugify = (s) => s.toLowerCase().trim()
+    .replace(/[^\w\s-]/g,"").replace(/\s+/g,"-").replace(/-+/g,"-").slice(0,60);
+
+  function truncate(text, max){
+    if(!text) return text;
+    if(text.length<=max) return text;
+    const cuts = [". ", "! ", "? ", "\n"];
+    for(const sep of cuts){
+      const i = text.lastIndexOf(sep, max);
+      if(i !== -1 && i > max-120) return (text.slice(0,i+sep.length)).trim();
+    }
+    return text.slice(0,max).trim()+"...";
+  }
+
+  function fm(content) {
+    // Escape double quotes in YAML scalars
+    const esc = (s)=> (s||"").replace(/"/g,'\\"');
+    const t_en = document.getElementById("title_en").value.trim();
+    const t_hi = document.getElementById("title_hi").value.trim();
+    const b_en = document.getElementById("body_en").value.trim();
+    const b_hi = document.getElementById("body_hi").value.trim();
+    const m_en = truncate(document.getElementById("meta_desc_en").value.trim(), 160);
+    const m_hi = truncate(document.getElementById("meta_desc_hi").value.trim(), 160);
+    const k_en = document.getElementById("keywords_en").value.trim();
+    const k_hi = document.getElementById("keywords_hi").value.trim();
+    const cat = document.getElementById("category").value.trim();
+    const alt = document.getElementById("image_alt").value.trim();
+
+    return {
+      t_en, t_hi, b_en, b_hi, m_en, m_hi, k_en, k_hi, cat, alt
+    };
+  }
+
+  // Client-side image compression to JPEG/WebP
+  async function compressImage(file, maxW=1200, quality=0.85, type="image/jpeg"){
+    const img = new Image();
+    const fr = new FileReader();
+    const load = new Promise((res)=> fr.onload = ()=> res(fr.result));
+    fr.readAsDataURL(file);
+    const dataURL = await load;
+    img.src = dataURL;
+    await new Promise((r)=> img.onload = r);
+
+    const scale = Math.min(1, maxW / img.naturalWidth);
+    const w = Math.round(img.naturalWidth * scale);
+    const h = Math.round(img.naturalHeight * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0,0,w,h);
+    ctx.drawImage(img,0,0,w,h);
+
+    const blob = await new Promise((res)=> canvas.toBlob(res, type, quality));
+    return blob;
+  }
+
+  async function toBase64(blob){
+    const arr = await blob.arrayBuffer();
+    let bin = "";
+    const bytes = new Uint8Array(arr);
+    const chunk = 0x8000;
+    for (let i=0; i<bytes.length; i+=chunk){
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i+chunk));
+    }
+    return btoa(bin);
+  }
+
+  async function githubRequest(path, method, body, token){
+    const repo = document.getElementById("repo").value.trim();
+    const url = `https://api.github.com/repos/${repo}/${path}`;
+    const res = await fetch(url, {
+      method,
+      headers:{
+        "Authorization": `Bearer ${token}`,
+        "Accept":"application/vnd.github+json",
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if(!res.ok){
+      const txt = await res.text();
+      throw new Error(`${method} ${path} -> ${res.status}: ${txt}`);
+    }
+    return res.json();
+  }
+
+  async function ensureBranch(token, base="main", branch){
+    if(!branch) return base;
+    // Get base SHA
+    const baseRef = await githubRequest(`git/ref/heads/${base}`, "GET", null, token);
+    const sha = baseRef.object.sha;
+    await githubRequest(`git/refs`, "POST", { ref:`refs/heads/${branch}`, sha }, token);
+    return branch;
+  }
+
+  async function uploadContent(token, path, contentB64, message, branch){
+    const body = { message, content: contentB64 };
+    if(branch) body.branch = branch;
+    return githubRequest(`contents/${encodeURIComponent(path)}`,"PUT", body, token);
+  }
+
+  function buildPostContent(fmVals, imagePath){
+    const {
+      t_en, t_hi, b_en, b_hi, m_en, m_hi, k_en, k_hi, cat, alt
+    } = fmVals;
+    // YAML front matter + markdown. Use body_hi as block scalar to preserve newlines.
+    const hiBlock = (b_hi||"").split("\n").map(l=>"  "+l).join("\n");
+    const keywords = [k_en, k_hi].filter(Boolean).join(", ");
+    return `---
+layout: post
+title: "${t_en.replace(/"/g,'\\"')}"
+title_hi: "${(t_hi||"").replace(/"/g,'\\"')}"
+category: "${cat}"
+description: "${m_en.replace(/"/g,'\\"')}"
+meta_desc_hi: "${(m_hi||"").replace(/"/g,'\\"')}"
+keywords: "${keywords.replace(/"/g,'\\"')}"
+image: ${imagePath || ""}
+image_alt: "${(alt||"").replace(/"/g,'\\"')}"
+body_hi: |
+${hiBlock}
+---
+
+${b_en || "_(English content not provided.)_"}
+`;
+  }
+
+  function renderPreview(){
+    const { t_en, b_en } = fm();
+    const html = `
+      <h2>${t_en || "(Untitled)"}</h2>
+      <div class="note">Live preview (markdown rendered below):</div>
+      <hr>
+      <div>${marked.parse(b_en || "")}</div>
+    `;
+    els.previewBox.innerHTML = html;
+  }
+
+  // tabs
+  document.querySelectorAll(".tab").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+      if(btn.dataset.tab==="preview") renderPreview();
+      if(btn.dataset.tab==="manager") loadPosts();
+    });
+  });
+
+  // --- Post Manager ---
+  let allPosts = [];
+  
+  async function loadPosts(){
+    const token = document.getElementById("ghToken").value.trim();
+    if(!token){
+      document.getElementById("postsList").innerHTML = '<p class="note">Please enter your GitHub token first.</p>';
+      return;
+    }
+    
+    document.getElementById("postsList").textContent = "Loading posts...";
+    
+    try{
+      const repo = document.getElementById("repo").value.trim();
+      const res = await fetch(`https://api.github.com/repos/${repo}/contents/_posts`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/vnd.github+json"
+        }
+      });
+      
+      if(!res.ok) throw new Error(`Failed to load posts: ${res.status}`);
+      
+      const files = await res.json();
+      allPosts = files.filter(f => f.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+      
+      renderPostsList();
+    }catch(e){
+      document.getElementById("postsList").innerHTML = `<p class="danger">Error: ${e.message}</p>`;
+    }
+  }
+  
+  function renderPostsList(){
+    if(allPosts.length === 0){
+      document.getElementById("postsList").innerHTML = '<p class="note">No posts found.</p>';
+      return;
+    }
+    
+    const html = allPosts.map(post => {
+      // Extract date and title from filename
+      const match = post.name.match(/^(\d{4}-\d{2}-\d{2})-(.+)\.md$/);
+      const date = match ? match[1] : 'Unknown';
+      const slug = match ? match[2] : post.name;
+      const title = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      
+      return `
+        <div class="post-card">
+          <div class="post-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem">📄</div>
+          <div class="post-info">
+            <h4>${title}</h4>
+            <p>${date} • ${post.name}</p>
+          </div>
+          <div class="post-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editPost('${post.path}', '${post.sha}')">✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deletePost('${post.path}', '${post.name}', '${post.sha}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    document.getElementById("postsList").innerHTML = html;
+  }
+  
+  window.editPost = async function(path, sha){
+    const token = document.getElementById("ghToken").value.trim();
+    if(!token){ alert("Please enter GitHub token"); return; }
+    
+    els.status.textContent = "Loading post...";
+    
+    try{
+      const repo = document.getElementById("repo").value.trim();
+      const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/vnd.github+json"
+        }
+      });
+      
+      if(!res.ok) throw new Error(`Failed to load post: ${res.status}`);
+      
+      const data = await res.json();
+      const content = atob(data.content);
+      
+      // Parse front matter and body
+      const fmMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+      if(!fmMatch){
+        alert("Could not parse post front matter");
+        return;
+      }
+      
+      const frontMatter = fmMatch[1];
+      const body = fmMatch[2];
+      
+      // Extract fields from front matter
+      const extract = (key) => {
+        const m = frontMatter.match(new RegExp(`^${key}:\\s*["']?(.*?)["']?$`, 'm'));
+        return m ? m[1].replace(/\\"/g, '"') : '';
+      };
+      
+      const extractBlock = (key) => {
+        const m = frontMatter.match(new RegExp(`^${key}:\\s*\\|\\n([\\s\\S]*?)(?=^\\w+:|$)`, 'm'));
+        if(!m) return '';
+        return m[1].split('\n').map(l => l.replace(/^  /, '')).join('\n').trim();
+      };
+      
+      // Fill form
+      document.getElementById("title_en").value = extract("title");
+      document.getElementById("title_hi").value = extract("title_hi");
+      document.getElementById("meta_desc_en").value = extract("description");
+      document.getElementById("meta_desc_hi").value = extract("meta_desc_hi");
+      document.getElementById("image_alt").value = extract("image_alt");
+      document.getElementById("category").value = extract("category") || "Technology";
+      
+      // Extract date from filename
+      const dateMatch = path.match(/(\d{4}-\d{2}-\d{2})/);
+      if(dateMatch) document.getElementById("date").value = dateMatch[1];
+      
+      // Keywords
+      const kw = extract("keywords");
+      const kwParts = kw.split(',').map(s => s.trim());
+      const kwEn = kwParts.filter(k => !/[\u0900-\u097F]/.test(k)).join(', ');
+      const kwHi = kwParts.filter(k => /[\u0900-\u097F]/.test(k)).join(', ');
+      document.getElementById("keywords_en").value = kwEn;
+      document.getElementById("keywords_hi").value = kwHi;
+      
+      // Image
+      const existingImage = extract("image");
+      if(existingImage){
+        document.getElementById("currentImage").innerHTML = `
+          <div style="display:flex;gap:.5rem;align-items:center;padding:.5rem;background:#f9fafb;border-radius:6px">
+            <img src="${existingImage}" style="width:100px;height:75px;object-fit:cover;border-radius:4px">
+            <div style="flex:1">
+              <div style="font-size:.85rem;font-weight:600">Current Image</div>
+              <div style="font-size:.75rem;color:#6b7280">${existingImage}</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="document.getElementById('currentImage').innerHTML='';document.getElementById('image_alt').dataset.existingImage=''">Remove</button>
+          </div>
+        `;
+        document.getElementById("image_alt").dataset.existingImage = existingImage;
+      }else{
+        document.getElementById("currentImage").innerHTML = '';
+        document.getElementById("image_alt").dataset.existingImage = '';
+      }
+      
+      // Body
+      const bodyHi = extractBlock("body_hi");
+      document.getElementById("body_en").value = body.trim();
+      document.getElementById("body_hi").value = bodyHi;
+      
+      // Store original path and SHA for updating
+      window.editingPost = { path, sha };
+      
+      // Update UI
+      document.getElementById("editorTitle").textContent = `Editing: ${path.split('/').pop()}`;
+      
+      // Switch to editor tab
+      document.querySelector('.tab[data-tab="editor"]').click();
+      els.status.textContent = `Loaded post for editing`;
+      
+    }catch(e){
+      els.status.textContent = "Error loading post: " + e.message;
+    }
+  };
+  
+  // New post button - clears form
+  document.getElementById("newPostBtn").onclick = function(){
+    // Clear all form fields
+    ["title_en","title_hi","body_en","body_hi","meta_desc_en","meta_desc_hi","keywords_en","keywords_hi","image_alt"].forEach(id => {
+      document.getElementById(id).value = "";
+    });
+    document.getElementById("category").value = "Technology";
+    document.getElementById("date").valueAsDate = new Date();
+    document.getElementById("image").value = "";
+    document.getElementById("currentImage").innerHTML = "";
+    document.getElementById("image_alt").dataset.existingImage = "";
+    
+    // Clear editing state
+    window.editingPost = null;
+    document.getElementById("editorTitle").textContent = "New Post";
+    els.status.textContent = "Ready to create new post";
+  };
+  
+  window.deletePost = async function(path, name, sha){
+    if(!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    
+    const token = document.getElementById("ghToken").value.trim();
+    if(!token){ alert("Please enter GitHub token"); return; }
+    
+    try{
+      await githubRequest(`contents/${encodeURIComponent(path)}`, "DELETE", {
+        message: `chore(admin): delete ${name}`,
+        sha: sha
+      }, token);
+      
+      alert("Post deleted successfully");
+      loadPosts();
+    }catch(e){
+      alert("Delete failed: " + e.message);
+    }
+  };
+  
+  document.getElementById("refreshPosts").onclick = loadPosts;
+
+  // autosave to localStorage
+  const SAVE_KEYS = ["title_en","title_hi","body_en","body_hi","meta_desc_en","meta_desc_hi","keywords_en","keywords_hi","category","date","image_alt"];
+  function saveDraft(){
+    const draft = {};
+    for(const k of SAVE_KEYS){
+      draft[k] = document.getElementById(k).value;
+    }
+    localStorage.setItem("bdan_admin_draft", JSON.stringify(draft));
+    els.status.textContent = "Draft saved locally.";
+  }
+  function loadDraft(){
+    const str = localStorage.getItem("bdan_admin_draft");
+    if(!str) return;
+    try{
+      const d = JSON.parse(str);
+      for(const k of SAVE_KEYS){
+        if(d[k]!==undefined) document.getElementById(k).value = d[k];
+      }
+    }catch{}
+  }
+  document.getElementById("saveDraft").onclick = saveDraft;
+  document.getElementById("clearDraft").onclick = ()=>{
+    localStorage.removeItem("bdan_admin_draft");
+    els.status.textContent = "Draft cleared.";
+  };
+
+  // publish
+  document.getElementById("publishBtn").onclick = async ()=>{
+    const token = document.getElementById("ghToken").value.trim();
+    if(!token){ els.status.textContent = "Provide a GitHub token."; return; }
+
+    const t_en = document.getElementById("title_en").value.trim();
+    const b_en = document.getElementById("body_en").value.trim();
+    if(!t_en || !b_en){ els.status.textContent = "Title (EN) and Body (EN) are required."; return; }
+
+    const mode = document.getElementById("publishMode").value;
+    const dateSel = document.getElementById("date").value || todayISO();
+    const date = (new Date(dateSel) > new Date()) ? todayISO() : dateSel; // prevent future-dated hide
+    const sg = slugify(t_en);
+    const postName = `${date}-${sg}.md`;
+
+    // Check if we're editing an existing post
+    const isEditing = window.editingPost && window.editingPost.path;
+    const postPath = isEditing ? window.editingPost.path : `_posts/${postName}`;
+    const commitMsg = isEditing ? `feat(admin): update ${postPath.split('/').pop()}` : `feat(admin): add post ${postName}`;
+
+    els.status.textContent = "Preparing...";
+    // image
+    let imagePath = "";
+    const file = document.getElementById("image").files[0];
+    if(file){
+      els.status.textContent = "Compressing image...";
+      let blob = await compressImage(file, 1200, 0.85, "image/jpeg");
+      const b64 = await toBase64(blob);
+      const imgName = `${Date.now()}-${sg}.jpg`;
+      const imgPath = `assets/images/${imgName}`;
+      els.status.textContent = "Uploading image...";
+      try{
+        await uploadContent(token, imgPath, b64, `chore(admin): add image ${imgName}`, mode==="pr" ? `admin-${Date.now()}` : undefined);
+        imagePath = `/${imgPath}`;
+      }catch(e){
+        els.status.textContent = "Image upload failed: "+e.message;
+        return;
+      }
+    }else if(isEditing){
+      // Keep existing image if no new one uploaded
+      const existingImg = document.getElementById("image_alt").dataset.existingImage;
+      if(existingImg) imagePath = existingImg;
+    }
+
+    // post content
+    const md = buildPostContent(fm(), imagePath);
+    const mdB64 = btoa(unescape(encodeURIComponent(md)));
+
+    // Try push to main, fallback to PR if selected/needed
+    let branch = null;
+    if(mode==="pr") branch = `admin-${Date.now()}`;
+
+    try{
+      if(branch){
+        els.status.textContent = "Creating branch...";
+        await ensureBranch(token, "main", branch);
+      }
+    }catch(e){
+      els.status.textContent = "Branch create failed: "+e.message;
       return;
     }
 
-    // Compose markdown post
-    statusEl.textContent = 'Creating post file...';
-    const slug = slugify(title_en);
-    const filename = `${dateStr}-${slug}.md`;
-    const fm = [
-      '---',
-      'layout: post',
-      `title: "${title_en.replace(/"/g,'\\"')}"`,
-      `category: "${category}"`,
-      `description: "${meta_desc_en.replace(/"/g,'\\"')}"`,
-      `keywords: "${(keywords_en + (keywords_hi? (', ' + keywords_hi) : '')).replace(/"/g,'\\"')}"`,
-      imagePath ? `image: ${imagePath}` : '',
-      `image_alt: "${image_alt.replace(/"/g,'\\"')}"`,
-      'body_hi: |',
-      indentBlock(content_hi || ''),
-      `meta_desc_hi: "${meta_desc_hi.replace(/"/g,'\\"')}"`,
-      `title_hi: "${title_hi.replace(/"/g,'\\"')}"`,
-      '---',
-      ''
-    ].filter(Boolean).join('\n');
-    const md = fm + (content_en || '') + '\n';
-
+    els.status.textContent = isEditing ? "Updating post..." : "Creating post...";
     try{
-      const b64 = base64EncodeUnicode(md);
-      const repoPath = `_posts/${filename}`;
-      // Ensure unique: if exists, append a suffix
-      let pathToUse = repoPath;
-      let exists = await githubGet(repoPath, token);
-      if(exists && exists.status === 200){
-        const altPath = `_posts/${dateStr}-${slug}-${Date.now().toString().slice(-5)}.md`;
-        pathToUse = altPath;
+      const body = { message: commitMsg, content: mdB64 };
+      if(branch) body.branch = branch;
+      if(isEditing && window.editingPost.sha) body.sha = window.editingPost.sha; // Required for updates
+      
+      await githubRequest(`contents/${encodeURIComponent(postPath)}`,"PUT", body, token);
+    }catch(e){
+      // If main blocked and not in PR mode, attempt PR fallback automatically
+      if(!branch){
+        try{
+          branch = `admin-${Date.now()}`;
+          els.status.textContent = "Main push blocked, creating PR branch...";
+          await ensureBranch(token, "main", branch);
+          const body = { message: commitMsg, content: mdB64, branch };
+          if(isEditing && window.editingPost.sha) body.sha = window.editingPost.sha;
+          await githubRequest(`contents/${encodeURIComponent(postPath)}`,"PUT", body, token);
+        }catch(ex){
+          els.status.textContent = "Post save failed: "+ex.message;
+          return;
+        }
+      }else{
+        els.status.textContent = "Post save failed: "+e.message;
+        return;
       }
-      const res = await githubPut(pathToUse, b64, `admin: publish post ${filename}`, token);
-      if(!res.ok){
-        const t = await res.text();
-        throw new Error(`Post create failed: ${res.status} ${t}`);
-      }
-      statusEl.style.color = '#34a853';
-      statusEl.textContent = '✅ Post published successfully.';
-      alert('Post created! It will appear on the site after Pages build completes.');
-    }catch(err){
-      console.error(err);
-      statusEl.style.color = '#ea4335';
-      statusEl.textContent = 'Post creation failed. See console for details.';
     }
+
+    // If PR branch, open PR
+    if(branch){
+      try{
+        const repo = document.getElementById("repo").value.trim();
+        els.status.textContent = "Opening pull request...";
+        await githubRequest(`pulls`, "POST", {
+          title: isEditing ? `Update post: ${t_en}` : `Publish post: ${t_en}`,
+          head: branch,
+          base: "main",
+          body: "Created via Admin panel"
+        }, token);
+        els.status.textContent = `Success. PR opened from ${branch}. Review and merge to publish.`;
+      }catch(e){
+        els.status.textContent = "PR open failed: "+e.message;
+        return;
+      }
+    }else{
+      const action = isEditing ? "updated" : "created";
+      els.status.textContent = `Success. Post ${action} on main. It should appear on site within ~1 minute.`;
+    }
+    
+    // Clear editing state
+    window.editingPost = null;
+    
+    // Refresh posts list
+    setTimeout(() => loadPosts(), 1000);
+  };
+
+  // live preview on input
+  ["title_en","body_en"].forEach(id=>{
+    document.getElementById(id).addEventListener("input", ()=>{
+      if(document.querySelector('.tab.active')?.dataset.tab==="preview"){
+        renderPreview();
+      }
+    });
   });
 </script>
