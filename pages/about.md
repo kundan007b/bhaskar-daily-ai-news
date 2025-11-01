@@ -1,34 +1,34 @@
 ---
-title: "About Bhaskar Daily AI News"
+title: "About Bhaskar Daily News"
 layout: default
 permalink: /about/
-description: "Learn about India's first bilingual AI-powered news platform delivering curated updates in English and Hindi."
+description: "Learn about Bhaskar Daily News - your source for bilingual news coverage in English and Hindi, written by KB."
 ---
 
-<div style="max-width: 800px; margin: 0 auto;">
+<div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
 
 ## About Us
 
 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; border-radius: 16px; margin: 2rem 0;">
-  <h2 style="color: white; font-size: 2.5rem; margin-bottom: 1rem;">Welcome to Bhaskar Daily AI News</h2>
+  <h2 style="color: white; font-size: 2.5rem; margin-bottom: 1rem;">Welcome to Bhaskar Daily News</h2>
   <p style="font-size: 1.2rem; line-height: 1.6; color: rgba(255,255,255,0.95);">
-    India's first bilingual AI-powered news platform delivering curated updates in both English and हिन्दी.
+    Your trusted source for bilingual news coverage in both English and हिन्दी, written by KB.
   </p>
 </div>
 
 ### 🎯 Our Mission
 
-We're revolutionizing how Indians consume news by combining cutting-edge artificial intelligence with bilingual accessibility. Our mission is to make quality news accessible to everyone, breaking down language barriers and delivering insights that matter.
+We're dedicated to making quality journalism accessible to everyone. Our mission is to deliver accurate, timely news across multiple categories while breaking down language barriers with comprehensive bilingual content.
 
-### 🤖 How It Works
+### ✍️ Written by KB
 
-**Bhaskar Daily AI News** leverages advanced AI technology to:
+**Bhaskar Daily News** is written and curated by **KB (Kundan Bhaskar)**, a passionate journalist committed to:
 
-- **Curate Content**: Our AI scans and analyzes thousands of sources to bring you the most relevant stories
-- **Generate Insights**: Using Google's Gemini AI, we create comprehensive, unbiased news articles
-- **Create Visuals**: DALL-E 3 generates unique, contextual images for every story
-- **Translate Seamlessly**: Every article is available in both English and Hindi (हिन्दी)
-- **Update Regularly**: Fresh content delivered 3 times daily (6 AM, 2 PM, 10 PM IST)
+- **Accurate Reporting**: Thoroughly researched and fact-checked articles
+- **Timely Updates**: Breaking news and regular coverage of important events
+- **Bilingual Content**: Every article available in both English and Hindi (हिन्दी)
+- **Comprehensive Coverage**: In-depth analysis across politics, business, technology, finance, and startups
+- **Editorial Integrity**: Unbiased, independent journalism you can trust
 
 ### 📰 Coverage Areas
 
@@ -49,9 +49,14 @@ We're revolutionizing how Indians consume news by combining cutting-edge artific
     <p style="color: #5f6368; font-size: 0.9rem;">Economy & Investment</p>
   </div>
   <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 12px; text-align: center;">
-    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚀</div>
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">�</div>
     <h4>Technology</h4>
-    <p style="color: #5f6368; font-size: 0.9rem;">Innovation & Startups</p>
+    <p style="color: #5f6368; font-size: 0.9rem;">Innovation & Digital</p>
+  </div>
+  <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 12px; text-align: center;">
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚀</div>
+    <h4>Startups</h4>
+    <p style="color: #5f6368; font-size: 0.9rem;">Entrepreneurship & Funding</p>
   </div>
 </div>
 
@@ -60,58 +65,44 @@ We're revolutionizing how Indians consume news by combining cutting-edge artific
 <div style="background: #e8f0fe; border-left: 4px solid #1a73e8; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
   <ul style="list-style: none; padding: 0; margin: 0;">
     <li style="margin-bottom: 1rem;">✅ <strong>100% Free</strong> - No subscriptions, no paywalls</li>
-    <li style="margin-bottom: 1rem;">✅ <strong>Bilingual Content</strong> - Read in English or हिन्दी with one click</li>
-    <li style="margin-bottom: 1rem;">✅ <strong>AI-Powered</strong> - Unbiased, comprehensive analysis</li>
-    <li style="margin-bottom: 1rem;">✅ <strong>Regular Updates</strong> - Fresh news hourly (120 posts/day)</li>
+    <li style="margin-bottom: 1rem;">✅ <strong>Bilingual Content</strong> - Read in English or हिन्दी</li>
+    <li style="margin-bottom: 1rem;">✅ <strong>Quality Journalism</strong> - Well-researched, fact-checked articles</li>
+    <li style="margin-bottom: 1rem;">✅ <strong>Regular Updates</strong> - Fresh news and analysis</li>
     <li style="margin-bottom: 1rem;">✅ <strong>Mobile Optimized</strong> - Read anywhere, anytime</li>
-    <li>✅ <strong>Ad-Supported</strong> - Free content supported by ethical advertising</li>
+    <li>✅ <strong>Independent</strong> - No political or corporate bias</li>
   </ul>
 </div>
 
-### 🔬 Technology Stack
+### � Technology
 
-We use cutting-edge technology to deliver the best experience:
+We use modern technology to deliver the best reading experience:
 
-- **Google Gemini AI** (gemini-2.0-flash-exp) - Text generation
-- **OpenAI DALL-E 3** - Image generation
-- **Jekyll** - Fast, secure static site
-- **GitHub Pages** - Reliable hosting
-- **Python** - Automation & content generation
+- **Jekyll** - Fast, secure static site generation
+- **GitHub Pages** - Reliable, free hosting
+- **EmailJS** - Instant email notifications
+- **Google Analytics** - Privacy-respecting analytics
 
 ### 📧 Get In Touch
 
 Have questions, feedback, or suggestions? We'd love to hear from you!
 
 <div style="text-align: center; margin: 3rem 0;">
-  <a href="/contact/" class="btn btn-primary" style="text-decoration: none; font-size: 1.1rem;">
+  <a href="/contact/" class="btn btn-primary" style="text-decoration: none; font-size: 1.1rem; display: inline-block; padding: 0.75rem 2rem; background: #667eea; color: white; border-radius: 8px;">
     📬 Contact Us
   </a>
 </div>
 
 ### 🔔 Stay Updated
 
-Subscribe to our newsletter to get daily AI news digests delivered to your inbox.
+Subscribe to our newsletter to get daily news updates delivered to your inbox.
 
-<div style="background: #f8f9fa; padding: 2rem; border-radius: 12px; text-align: center; margin: 2rem 0;">
-  <form action="#" method="post" style="max-width: 500px; margin: 0 auto;">
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-      <input type="email" placeholder="Your email address" required 
-             style="flex: 1; min-width: 250px; padding: 0.75rem 1rem; border: 1px solid #dadce0; border-radius: 8px; font-size: 1rem;">
-      <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
-        Subscribe
-      </button>
-    </div>
-    <p style="font-size: 0.85rem; color: #5f6368; margin-top: 1rem;">
-      We respect your privacy. Unsubscribe anytime.
-    </p>
-  </form>
-</div>
+{% include newsletter-signup.html %}
 
 ---
 
-<p style="text-align: center; color: #5f6368; font-style: italic;">
-  <strong>Disclaimer:</strong> All content on this website is generated by artificial intelligence. 
-  While we strive for accuracy, please verify important information from primary sources.
+<p style="text-align: center; color: #5f6368; margin-top: 3rem;">
+  <strong>Written by KB</strong> • Powered by Jekyll<br>
+  © {{ 'now' | date: "%Y" }} Bhaskar Daily News. All rights reserved.
 </p>
 
 </div>
