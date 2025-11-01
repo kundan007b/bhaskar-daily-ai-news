@@ -1,0 +1,30 @@
+name: "Subscribe to newsletter"
+description: "Leave your email to receive Bhaskar Daily AI News updates. Stored securely via GitHub Actions."
+title: "[SUBSCRIBE] <your@email.com>"
+labels:
+  - subscribe
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- form: subscribe -->
+        Thanks for subscribing to Bhaskar Daily AI News. We will only use your email for sending updates. You can unsubscribe anytime.
+
+  - type: input
+    id: email
+    attributes:
+      label: Email address
+      description: We'll validate and store this in a private list managed by the owner.
+      placeholder: your@email.com
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Consent
+      description: Confirm you agree to receive emails from this site.
+      options:
+        - label: I agree to receive email updates and understand my data will be stored securely.
+          required: true

@@ -1,0 +1,77 @@
+name: "Submit a news post"
+description: "Propose a news post to be published. Maintainers will review and publish automatically."
+title: "[POST] <short English title>"
+labels:
+  - post
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- form: new_post -->
+        Use this form to submit a bilingual news post suggestion. Provide a clear title and concise summary. The workflow will create a Jekyll post from this issue.
+
+  - type: input
+    id: title
+    attributes:
+      label: Post title (English)
+      placeholder: Short, descriptive headline
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - politics
+        - business
+        - technology
+        - finance
+        - startups
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: One-line summary (EN)
+      description: 140-200 chars, used for description/SEO.
+      placeholder: Brief summary used as meta description.
+    validations:
+      required: true
+
+  - type: textarea
+    id: content_en
+    attributes:
+      label: Content (English)
+      description: Main article body in Markdown. You can include links and lists.
+      placeholder: >-
+        Write 3-6 short paragraphs. Keep it factual and neutral.
+    validations:
+      required: true
+
+  - type: textarea
+    id: content_hi
+    attributes:
+      label: Content (Hindi) — optional
+      description: If you can, provide a short Hindi version too.
+      placeholder: हिन्दी सामग्री (वैकल्पिक)
+    validations:
+      required: false
+
+  - type: input
+    id: image_url
+    attributes:
+      label: Image URL (optional)
+      placeholder: https://...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Confirmation
+      options:
+        - label: I confirm this content is original or fairly quoted with attribution and fits the selected category.
+          required: true

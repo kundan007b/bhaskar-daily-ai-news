@@ -96,7 +96,47 @@ bundle exec jekyll serve
 
 ---
 
-## 📁 Project Structure
+## � Tier 1: No‑cost subscribers & post submissions (GitHub‑native)
+
+This repo includes two GitHub‑native workflows that let you collect emails and publish posts without any external backend.
+
+### 1) Subscribe via GitHub Issues
+
+- Link: https://github.com/kundan007b/bhaskar-daily-ai-news/issues/new?template=subscribe.yml
+- Form stores emails to a private repository as CSV using a Personal Access Token (PAT).
+
+Setup (one‑time):
+
+1. Create or choose a private repo to store subscribers, e.g. `kundan007b/news-subscribers`
+2. Create a classic PAT with `repo` scope (Settings → Developer settings → Personal access tokens → Tokens (classic))
+3. Add two repository secrets here (Settings → Secrets and variables → Actions):
+   - `SUBS_REPO` = `OWNER/REPO` (e.g., `kundan007b/news-subscribers`)
+   - `SUBS_REPO_TOKEN` = your PAT with repo scope
+4. The workflow `.github/workflows/subscribe-intake.yml` will:
+   - Parse the email from the issue
+   - Clone the private repo, append to `data/subscribers.csv`
+   - Comment and close the issue
+
+CSV schema: `timestamp,email,source,issue_url`
+
+### 2) Submit a post via GitHub Issues
+
+- Link: https://github.com/kundan007b/bhaskar-daily-ai-news/issues/new?template=new_post.yml
+- The workflow `.github/workflows/issue-to-post.yml` converts the issue into a Jekyll post in `_posts/` and pushes to `main`. Our existing deploy-on-push workflow takes care of publishing.
+
+Tips:
+- Provide a concise English title and one-line summary (used for SEO description)
+- Category must be one of: politics, business, technology, finance, startups
+- You may include an optional image URL
+- You can also add a Hindi section (optional)
+
+Security & privacy:
+- Subscriber emails are stored in a private repo you control
+- No extra SaaS cost; everything runs on GitHub Actions
+
+---
+
+## �📁 Project Structure
 
 ```
 bhaskar-daily-ai-news/
@@ -178,7 +218,7 @@ adsense_client_id: "ca-pub-YOUR-ACTUAL-ID"
 - [ ] Manual review queue before auto-publish
 - [ ] Fact-checking integration
 - [ ] Multi-language expansion (more Indian languages)
-- [ ] Newsletter subscription
+- [x] Newsletter subscription via GitHub Issues (Tier 1 backend)
 - [ ] RSS feed per category
 - [ ] Analytics dashboard
 - [ ] User comments (Disqus/Utterances)
