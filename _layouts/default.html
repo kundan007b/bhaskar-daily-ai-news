@@ -179,15 +179,26 @@
                 date: new Date().toLocaleDateString()
             })
             .then(function(response) {
-                console.log('SUCCESS!', response.status, response.text);
+                console.log('EmailJS SUCCESS!', response.status, response.text);
                 showMessage(messageDiv, '✅ Success! Check your email for confirmation.', 'success');
                 document.getElementById(emailInputId).value = '';
                 
                 // Store subscriber in GitHub via API
                 storeSubscriber(email);
             }, function(error) {
-                console.log('FAILED...', error);
-                showMessage(messageDiv, '❌ Subscription failed. Please try again.', 'error');
+                console.error('EmailJS ERROR:', error);
+                console.error('Error details:', JSON.stringify(error));
+                
+                // Show more specific error message
+                let errorMsg = '❌ Subscription failed. ';
+                if (error.text) {
+                    errorMsg += error.text;
+                } else if (error.message) {
+                    errorMsg += error.message;
+                } else {
+                    errorMsg += 'Please check your email template configuration.';
+                }
+                showMessage(messageDiv, errorMsg, 'error');
             })
             .finally(function() {
                 submitBtn.disabled = false;
