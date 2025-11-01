@@ -1,5 +1,5 @@
-title: "Bhaskar Daily AI News"
-description: "AI-curated bilingual (English & हिन्दी) news on politics, business, tech, finance & startups — updated every 8 hours."
+title: "Bhaskar Daily News"
+description: "Bilingual (English & हिन्दी) news on politics, business, tech, finance & startups — written by KB with regular updates."
 url: "https://www.kbhaskar.tech"
 plugins: [jekyll-feed, jekyll-sitemap]
 markdown: kramdown

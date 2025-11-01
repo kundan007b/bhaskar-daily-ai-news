@@ -1,8 +1,8 @@
-# 📰 Bhaskar Daily AI News
+# 📰 Bhaskar Daily News
 
-**AI-Curated Bilingual News Platform** | English & हिन्दी
+**Bilingual News Platform** | English & हिन्दी
 
-Automated news aggregator generating factual, balanced coverage on Indian politics, business, technology, finance, and startups—updated every 8 hours.
+Bilingual news covering Indian politics, business, technology, finance, and startups—written by KB with regular updates.
 
 🌐 **Live Site:** [www.kbhaskar.tech](https://www.kbhaskar.tech)
 
@@ -10,13 +10,13 @@ Automated news aggregator generating factual, balanced coverage on Indian politi
 
 ## ✨ Features
 
-- 🤖 **AI-Powered Content Generation** using Google Gemini API
+- ✍️ **Written by KB** - Personal insights and analysis
 - 🌍 **Bilingual Support** - Full content in English & Hindi (Devanagari)
-- ⚡ **Auto-Publishing** - New posts every 8 hours (00:00, 08:00, 16:00 UTC)
-- 🎨 **AI-Generated Images** - Contextual editorial photos via Imagen
+- 📝 **Manual Publishing** - Admin panel for easy content management
+- 🖼️ **Custom Images** - Manually curated images for each post
 - 📱 **Responsive Design** - Mobile-first Jekyll theme
 - 🔍 **SEO Optimized** - Rich metadata, structured data, Open Graph
-- 🔒 **Privacy-Focused** - No user tracking, transparent AI disclosure
+- 🔒 **Privacy-Focused** - No user tracking
 
 ---
 
@@ -24,25 +24,23 @@ Automated news aggregator generating factual, balanced coverage on Indian politi
 
 ```
 ┌─────────────────────────────────────────────────┐
-│         GitHub Actions (Scheduled)              │
-│    Runs 3x daily: 00:30, 08:30, 16:30 UTC      │
+│         Admin Panel (Browser-based)             │
+│    /admin - Write, edit, and publish posts      │
 └─────────────────┬───────────────────────────────┘
                   │
                   ▼
 ┌─────────────────────────────────────────────────┐
-│      scripts/generate_post.py                   │
-│  • Selects topic from rotation                  │
-│  • Calls Gemini API for content (EN + HI)       │
-│  • Generates contextual image via Imagen        │
-│  • Validates JSON schema & content quality      │
-│  • Writes markdown file to _posts/              │
+│      GitHub API (via Personal Token)            │
+│  • Creates/updates markdown files in _posts/    │
+│  • Uploads images to assets/images/             │
+│  • Commits changes directly to repository       │
 └─────────────────┬───────────────────────────────┘
                   │
                   ▼
 ┌─────────────────────────────────────────────────┐
 │      Jekyll Build & GitHub Pages Deploy         │
 │  • Builds static site from markdown             │
-│  • Deploys to GitHub Pages                      │
+│  • Deploys automatically on push                │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -52,9 +50,8 @@ Automated news aggregator generating factual, balanced coverage on Indian politi
 
 ### Prerequisites
 
-- Python 3.11+
-- Google Gemini API key ([get one here](https://ai.google.dev/))
-- GitHub account (for deployment)
+- GitHub account (for deployment and admin access)
+- GitHub Personal Access Token (for admin panel)
 
 ### Local Development
 
@@ -62,15 +59,6 @@ Automated news aggregator generating factual, balanced coverage on Indian politi
 # Clone repository
 git clone https://github.com/kundan007b/bhaskar-daily-ai-news.git
 cd bhaskar-daily-ai-news
-
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Set API key
-export GEMINI_API_KEY="your-api-key-here"
-
-# Generate a test post
-python scripts/generate_post.py
 
 # Install Jekyll (for local preview)
 bundle install
@@ -80,19 +68,23 @@ bundle exec jekyll serve
 # Visit http://localhost:4000
 ```
 
-### GitHub Actions Setup
+### GitHub Pages Setup
 
-1. **Add Secret to Repository:**
-   - Go to: Settings → Secrets and variables → Actions
-   - Create new secret: `GEMINI_API_KEY`
-   - Paste your Gemini API key
-
-2. **Enable GitHub Pages:**
+1. **Enable GitHub Pages:**
    - Go to: Settings → Pages
    - Source: GitHub Actions
    - Save
 
-3. **Workflow runs automatically** on schedule (3x daily)
+2. **Site automatically deploys** on every push to main
+
+### Admin Panel Access
+
+1. **Visit:** https://www.kbhaskar.tech/admin/
+2. **Login:** Username: `kb007`, Password: `Kundan@20`
+3. **Generate GitHub Token:**
+   - Go to: https://github.com/settings/tokens?type=beta
+   - Create fine-grained token with "Contents: Read and write"
+4. **Start writing posts!**
 
 ---
 

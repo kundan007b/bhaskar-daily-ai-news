@@ -8,8 +8,8 @@
 
 <!-- Primary Meta Tags -->
 <meta name="description" content="{{ desc | strip_html | truncate: 160 }}">
-<meta name="keywords" content="{{ page.keywords | default: 'AI news, bilingual news, India news, technology, business, politics, finance, startups, Hindi news, English news' }}">
-<meta name="author" content="{{ page.author | default: site.title }}">
+<meta name="keywords" content="{{ page.keywords | default: 'news, bilingual news, India news, technology, business, politics, finance, startups, Hindi news, English news' }}">
+<meta name="author" content="KB">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="googlebot" content="index, follow">
 <meta name="bingbot" content="index, follow">
@@ -67,8 +67,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ page_title | escape | truncate: 70 }}">
 <meta name="twitter:description" content="{{ desc | strip_html | truncate: 200 }}">
-<meta name="twitter:site" content="@{{ site.twitter_username | default: 'BhaskarDailyAI' }}">
-<meta name="twitter:creator" content="@{{ page.twitter_username | default: site.twitter_username | default: 'BhaskarDailyAI' }}">
+<meta name="twitter:site" content="@{{ site.twitter_username | default: 'kbhaskar' }}">
+<meta name="twitter:creator" content="@{{ page.twitter_username | default: site.twitter_username | default: 'kbhaskar' }}">
 {%- if page.image -%}
 <meta name="twitter:image" content="{{ site.url }}{{ page_image }}">
 <meta name="twitter:image:alt" content="{{ page.image_alt | default: page_title | escape }}">
@@ -109,15 +109,9 @@
   "keywords": "{{ page.keywords }}",
   {%- endif -%}
   "author": {
-    "@type": "Organization",
-    "name": "{{ site.title }}",
-    "url": "{{ site.url }}",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "{{ site.url }}/assets/images/logo.png",
-      "width": 250,
-      "height": 60
-    }
+    "@type": "Person",
+    "name": "KB",
+    "url": "{{ site.url }}"
   },
   "publisher": {
     "@type": "Organization",
@@ -208,7 +202,7 @@
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "{{ site.title }}",
-  "alternateName": "Bhaskar Daily AI News",
+  "alternateName": "Bhaskar Daily News",
   "description": "{{ site.description }}",
   "url": "{{ site.url }}",
   "inLanguage": ["en-IN", "hi-IN"],
@@ -237,8 +231,7 @@
       "availableLanguage": ["English", "Hindi"]
     },
     "sameAs": [
-      "https://github.com/{{ site.github_username | default: 'kundan007b' }}",
-      "https://twitter.com/{{ site.twitter_username | default: 'BhaskarDailyAI' }}"
+      "https://github.com/{{ site.github_username | default: 'kundan007b' }}"
     ]
   }
 }
@@ -250,7 +243,7 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "{{ site.title }}",
-  "alternateName": "Bhaskar Daily AI News",
+  "alternateName": "Bhaskar Daily News",
   "url": "{{ site.url }}",
   "logo": "{{ site.url }}/assets/images/logo.png",
   "description": "{{ site.description }}",
@@ -270,8 +263,7 @@
   "knowsLanguage": ["en-IN", "hi-IN"],
   "publishingPrinciples": "{{ site.url }}/privacy-policy/",
   "sameAs": [
-    "https://github.com/{{ site.github_username | default: 'kundan007b' }}",
-    "https://twitter.com/{{ site.twitter_username | default: 'BhaskarDailyAI' }}"
+    "https://github.com/{{ site.github_username | default: 'kundan007b' }}"
   ]
 }
 </script>

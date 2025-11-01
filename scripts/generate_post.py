@@ -147,7 +147,7 @@ def g_image(prompt: str, size: str = "1280x720") -> str:
     """
     try:
         # Use OpenAI DALL-E if API key is available, otherwise create placeholder
-        if OPENAI_API_KEY:
+        if OPENAI_API_KEY and OPENAI_API_KEY.strip():
             url = "https://api.openai.com/v1/images/generations"
             enhanced_prompt = f"Professional Indian news editorial photograph about: {prompt}. Photorealistic, neutral tone, high quality, 16:9 aspect ratio."
             
@@ -201,7 +201,14 @@ def g_image(prompt: str, size: str = "1280x720") -> str:
         
     except requests.RequestException as e:
         logger.error(f"Image generation API error: {e}")
-        raise
+        # Fall back to placeholder on API failure
+        logger.warning("Falling back to placeholder image due to API error")
+        img = Image.new('RGB', (1792, 1024), color='#1a73e8')
+        filename = hashlib.md5(topic.encode()).hexdigest()[:10] + ".jpg"
+        filepath = IMGDIR / filename
+        img.save(filepath, "JPEG", quality=IMAGE_QUALITY, optimize=True)
+        logger.info(f"✓ Placeholder image created: {filename}")
+        return f"/assets/images/{filename}"
     except Exception as e:
         logger.error(f"Image processing error: {e}")
         raise requests.RequestException(f"Image processing failed: {e}")

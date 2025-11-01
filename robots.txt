@@ -28,7 +28,7 @@ Sitemap: https://kbhaskar.tech/sitemap.xml
 
 # Do not index admin panel
 Disallow: /admin/
-Sitemap: https://kbhaskar.tech/feed.xml
+Sitemap: {{ "/sitemap.xml" | absolute_url }}
 
 # Host preference
 Host: https://kbhaskar.tech

@@ -2,182 +2,74 @@
 layout: default
 ---
 
-<article class="post" style="max-width: 800px; margin: 0 auto;">
-  <!-- Breadcrumbs -->
-  {%- include breadcrumbs.html -%}
-  
-  <!-- Post Header -->
-  <header class="post-header" style="margin-bottom: 2rem;">
-    {% if page.category %}
-      <span class="badge badge-{{ page.category | downcase }}" style="display: inline-block; margin-bottom: 1rem;">
-        {{ page.category }}
-      </span>
-    {% endif %}
-    
-    <h1 style="font-size: 2.5rem; font-weight: 700; margin: 1rem 0; line-height: 1.2; color: #202124;">
-      {{ page.title | escape }}
-    </h1>
-    
-    <div style="display: flex; gap: 1.5rem; color: #5f6368; font-size: 0.95rem; margin: 1rem 0; flex-wrap: wrap;">
-      <span>🗓️ <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time></span>
-      <span>⏱️ 5 min read</span>
-      <span>🤖 AI Generated</span>
+<article class="post-article">
+  <header class="post-head">
+    <h1 class="post-title">{{ page.title }}</h1>
+    <div class="post-meta">
+      <span class="badge">{{ page.category }}</span>
+      <span id="reading-time">· </span>
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
     </div>
-    
-    {% if page.description %}
-      <p style="font-size: 1.2rem; color: #5f6368; margin-top: 1rem; line-height: 1.6;">
-        {{ page.description | escape }}
-      </p>
+    {% if page.image %}
+      <figure class="post-figure">
+        <img src="{{ page.image | relative_url }}" alt="{{ page.image_alt | default: page.title }}" loading="lazy" decoding="async" />
+        {% if page.image_alt %}<figcaption>{{ page.image_alt }}</figcaption>{% endif %}
+      </figure>
     {% endif %}
-    
-    <!-- Language Toggle -->
-    <div style="margin-top: 1.5rem;">
-      {%- include lang-toggle.html -%}
-    </div>
   </header>
 
-  <!-- Featured Image -->
-  {% if page.image %}
-    <div style="margin: 2rem 0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-      <img src="{{ page.image }}" 
-           alt="{{ page.image_alt | default: page.title | escape }}" 
-           style="width: 100%; height: auto; display: block;"
-           loading="lazy">
-    </div>
-  {% endif %}
-  
-  <!-- Top Article Ad -->
-  {%- include ad-in-article.html -%}
+  <nav id="toc" class="toc"></nav>
 
-  <!-- Post Content (English) -->
-  <div class="post-content lang-section" id="en" style="font-size: 1.1rem; line-height: 1.8; color: #202124;">
-    {{ content | markdownify }}
-  </div>
-  
-  <!-- Post Content (Hindi) -->
-  <div class="post-content lang-section" id="hi" style="display: none; font-size: 1.1rem; line-height: 1.8; color: #202124;">
+  <section id="content-en" class="post-content">
+    {{ content }}
+  </section>
+
+  {% if page.body_hi %}
+  <hr>
+  <section id="content-hi" class="post-content hi">
     {{ page.body_hi | markdownify }}
-  </div>
-  
-  <!-- Bottom Article Ad -->
-  {%- include ad-in-article.html -%}
-
-  <!-- Keywords/Tags -->
-  {% if page.keywords %}
-    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #dadce0;">
-      <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: #202124;">Keywords:</h3>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-        {% assign keywords = page.keywords | split: ", " %}
-        {% for keyword in keywords limit:10 %}
-          <span style="background: #f1f3f4; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.9rem; color: #5f6368;">
-            {{ keyword }}
-          </span>
-        {% endfor %}
-      </div>
-    </div>
+  </section>
   {% endif %}
 
-  <!-- Social Share -->
-  <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
-    <h3 style="margin-bottom: 1rem; color: #202124;">📤 Share this article:</h3>
-    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-      <a href="https://twitter.com/intent/tweet?url={{ page.url | absolute_url | url_encode }}&text={{ page.title | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
-        🐦 Twitter
-      </a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u={{ page.url | absolute_url | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
-        📘 Facebook
-      </a>
-      <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
-        💼 LinkedIn
-      </a>
-      <a href="https://api.whatsapp.com/send?text={{ page.title | url_encode }}%20{{ page.url | absolute_url | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
-        💬 WhatsApp
-      </a>
-      <a href="https://telegram.me/share/url?url={{ page.url | absolute_url | url_encode }}&text={{ page.title | url_encode }}" 
-         target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration: none; flex: 1; min-width: 140px; text-align: center;">
-        ✈️ Telegram
-      </a>
-      <button onclick="copyToClipboard('{{ page.url | absolute_url }}')" class="btn btn-secondary" style="flex: 1; min-width: 140px; text-align: center; cursor: pointer;">
-        🔗 Copy Link
-      </button>
+  {% if page.keywords %}
+  <footer class="post-footer">
+    <div class="keywords">
+      {% assign tags = page.keywords | split: ',' %}
+      {% for t in tags %}
+        {% assign tag = t | strip %}
+        {% if tag != "" %}<span class="chip">{{ tag }}</span>{% endif %}
+      {% endfor %}
     </div>
-    <p id="copy-notification" style="display: none; margin-top: 0.5rem; color: #34a853; font-size: 0.9rem; text-align: center;">
-      ✓ Link copied to clipboard!
-    </p>
-  </div>
-
-  <script>
-    function copyToClipboard(text) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(function() {
-          showCopyNotification();
-        }, function() {
-          fallbackCopyToClipboard(text);
-        });
-      } else {
-        fallbackCopyToClipboard(text);
-      }
-    }
-    
-    function fallbackCopyToClipboard(text) {
-      var textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed";
-      textArea.style.top = 0;
-      textArea.style.left = 0;
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        showCopyNotification();
-      } catch (err) {
-        console.error('Copy failed', err);
-      }
-      document.body.removeChild(textArea);
-    }
-    
-    function showCopyNotification() {
-      var notification = document.getElementById('copy-notification');
-      notification.style.display = 'block';
-      setTimeout(function() {
-        notification.style.display = 'none';
-      }, 3000);
-    }
-  </script>
-
-  <!-- Navigation -->
-  <nav style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #dadce0; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-    {% if page.previous.url %}
-      <a href="{{ page.previous.url | relative_url }}" style="text-decoration: none; color: #1a73e8; font-weight: 500; max-width: 40%;">
-        ← {{ page.previous.title | escape | truncate: 50 }}
-      </a>
-    {% else %}
-      <span></span>
-    {% endif %}
-    
-    <a href="{{ '/' | relative_url }}" class="btn btn-secondary" style="text-decoration: none;">
-      🏠 Home
-    </a>
-    
-    {% if page.next.url %}
-      <a href="{{ page.next.url | relative_url }}" style="text-decoration: none; color: #1a73e8; font-weight: 500; text-align: right; max-width: 40%;">
-        {{ page.next.title | escape | truncate: 50 }} →
-      </a>
-    {% else %}
-      <span></span>
-    {% endif %}
-  </nav>
-  
-  <!-- Related Posts -->
-  {%- include related-posts.html -%}
-  
-  <!-- Newsletter Signup -->
-  <div style="margin-top: 3rem;">
-    {%- include newsletter-signup.html -%}
-  </div>
+  </footer>
+  {% endif %}
 </article>
+
+<script>
+  // Reading time (client-side, no plugins)
+  (function(){
+    const el = document.querySelector(".post-content");
+    if(!el) return;
+    const text = el.textContent || "";
+    const words = text.trim().split(/\s+/).length;
+    const mins = Math.max(1, Math.round(words/200));
+    const rt = document.getElementById("reading-time");
+    if(rt) rt.textContent = `· ${mins} min read · `;
+  })();
+
+  // Build TOC from h2/h3
+  (function(){
+    const area = document.querySelector(".post-content");
+    const toc = document.getElementById("toc");
+    if(!area || !toc) return;
+    const hs = area.querySelectorAll("h2, h3");
+    if(!hs.length) return;
+    let html = '<div class="toc-title">On this page</div><ul>';
+    hs.forEach(h=>{
+      const id = h.id || h.textContent.trim().toLowerCase().replace(/[^\w\s-]/g,"").replace(/\s+/g,"-");
+      h.id = id;
+      html += `<li class="${h.tagName==='H3'?'child':''}"><a href="#${id}">${h.textContent}</a></li>`;
+    });
+    html += '</ul>';
+    toc.innerHTML = html;
+  })();
+</script>

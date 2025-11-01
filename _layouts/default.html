@@ -59,16 +59,6 @@
         </div>
     </header>
 
-    <!-- AI Content Disclaimer -->
-    <div class="main-container">
-        <div class="disclaimer-banner">
-            <div class="disclaimer-icon">⚠️</div>
-            <div class="disclaimer-text">
-                <strong>AI-Generated Content:</strong> This site uses artificial intelligence to curate and generate news content. Please verify information from official sources before making decisions based on this content.
-            </div>
-        </div>
-    </div>
-
     <!-- Main Content -->
     <main class="main-container">
         {{ content }}
@@ -86,7 +76,7 @@
         <div class="footer-container">
             <div class="footer-section">
                 <h3>About</h3>
-                <p>AI-curated bilingual news covering India's politics, business, technology, finance, and startups. Updated automatically 3 times daily.</p>
+                <p>Bilingual news covering India's politics, business, technology, finance, and startups. Written by KB with regular updates.</p>
                 <div class="social-links">
                     <a href="https://twitter.com" class="social-link" aria-label="Twitter">🐦</a>
                     <a href="https://facebook.com" class="social-link" aria-label="Facebook">📘</a>
@@ -120,7 +110,7 @@
             
             <div class="footer-section">
                 <h3>Subscribe</h3>
-                <p>Get AI-curated news delivered to your inbox.</p>
+                <p>Get news updates delivered to your inbox.</p>
                 <form action="#" method="post" style="margin-top: 1rem;">
                     <input type="email" placeholder="Your email" style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd; width: 100%; margin-bottom: 0.5rem;">
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe</button>
@@ -129,8 +119,8 @@
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}. Powered by AI & Jekyll. All rights reserved.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Content generated using Google Gemini & OpenAI APIs</p>
+            <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Written by KB • Powered by Jekyll</p>
         </div>
     </footer>
 
