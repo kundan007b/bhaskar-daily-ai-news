@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="g3" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g3)"/>
+  <text x="80" y="170" font-family="Noto Sans Devanagari, Inter, Arial" font-size="60" font-weight="700" fill="white">बजट 5G फोन</text>
+  <text x="80" y="230" font-family="Inter, Arial" font-size="32" fill="#cbd5e1">Under ₹10,000 — Hindi guide</text>
+  <rect x="80" y="280" width="1040" height="240" rx="24" fill="#166534" opacity="0.35" stroke="#86efac" stroke-width="2"/>
+  <text x="120" y="350" font-family="Inter, Arial" font-size="26" fill="#e2e8f0">• 90Hz display • 5000mAh battery</text>
+  <text x="120" y="390" font-family="Inter, Arial" font-size="26" fill="#e2e8f0">• 2 years OS updates preferred</text>
+  <text x="120" y="430" font-family="Inter, Arial" font-size="26" fill="#e2e8f0">• Bank offers lower effective price</text>
+</svg>

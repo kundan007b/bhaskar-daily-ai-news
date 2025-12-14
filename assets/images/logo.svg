@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="140" viewBox="0 0 600 140" fill="none">
+  <rect width="600" height="140" rx="18" fill="#0F172A"/>
+  <rect x="24" y="24" width="92" height="92" rx="18" fill="url(#g1)"/>
+  <text x="70" y="87" text-anchor="middle" font-family="Inter, Arial" font-size="52" font-weight="700" fill="white">KB</text>
+  <text x="140" y="72" font-family="Inter, Arial" font-size="28" font-weight="700" fill="white">KB Tech News</text>
+  <text x="140" y="102" font-family="Inter, Arial" font-size="16" fill="#cbd5e1">Bilingual technology journalism</text>
+  <defs>
+    <linearGradient id="g1" x1="24" y1="24" x2="116" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2d8cff"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+</svg>

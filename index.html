@@ -1,148 +1,72 @@
 ---
 layout: default
 ---
-
-<!-- Hero Section -->
-<div class="hero-section">
-  <h1 class="hero-title">🌏 Bhaskar Daily News</h1>
-  <p class="hero-subtitle">Bilingual news • English & हिन्दी • Written by KB</p>
-  <div class="hero-cta">
-    <a href="#latest-news" class="btn btn-primary">📰 Latest News</a>
-    <a href="{{ '/feed.xml' | relative_url }}" class="btn btn-secondary">📡 Subscribe RSS</a>
-  </div>
-  
-  <!-- Quick Search Widget -->
-  <div style="max-width: 600px; margin: 2rem auto 0;">
-    <form action="{{ '/search' | relative_url }}" method="get" style="position: relative;">
-      <input 
-        type="text" 
-        name="q" 
-        placeholder="🔍 Search articles..." 
-        style="width: 100%; padding: 0.75rem 1.25rem; font-size: 1rem; border: 2px solid #dadce0; border-radius: 50px; outline: none; transition: all 0.3s;"
-        onfocus="this.style.borderColor='#1a73e8'; this.style.boxShadow='0 0 0 3px rgba(26,115,232,0.1)'"
-        onblur="this.style.borderColor='#dadce0'; this.style.boxShadow='none'"
-      >
-      <button type="submit" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #5f6368;">
-        →
-      </button>
-    </form>
-  </div>
-</div>
-
-<!-- Latest News Section -->
-<section id="latest-news">
-  <div class="section-header">
-    <h2 class="section-title">Latest News</h2>
-    <span class="text-secondary">{{ site.posts.size }} Posts Total</span>
-  </div>
-  
-  <!-- Header Ad -->
-  {%- include ad-header.html -%}
-  
-  <div class="post-grid">
-    {% for post in site.posts limit:12 %}
-      <article class="post-card fade-in">
-        <!-- Post Image -->
-        {% if post.image %}
-          <img src="{{ post.image | relative_url }}" alt="{{ post.image_alt | default: post.title | escape }}" class="post-image" loading="lazy">
-        {% else %}
-          <div class="post-image" style="background: linear-gradient(135deg, #1a73e8, #34a853); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
-            📰
-          </div>
-        {% endif %}
-        
-        <!-- Post Content -->
-        <div class="post-content">
-          <!-- Meta Information -->
-          <div class="post-meta">
-            {% if post.category %}
-              <span class="post-category badge badge-{{ post.category | downcase }}">
-                {{ post.category }}
-              </span>
-            {% endif %}
-            <span class="post-date">
-              🗓️ {{ post.date | date: "%b %d, %Y" }}
-            </span>
-          </div>
-          
-          <!-- Title -->
-          <h3 class="post-title">
-            <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-          </h3>
-          
-          <!-- Excerpt -->
-          {% if post.description %}
-            <p class="post-excerpt">{{ post.description | escape }}</p>
-          {% else %}
-            <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 150 }}</p>
-          {% endif %}
-          
-          <!-- Footer -->
-          <div class="post-footer">
-            <a href="{{ post.url | relative_url }}" class="read-more">
-              Read more →
-            </a>
-            <span class="reading-time">
-              ⏱️ 5 min read
-            </span>
-          </div>
-        </div>
-      </article>
-      
-      <!-- Insert ad after every 4 posts -->
-      {% if forloop.index == 4 or forloop.index == 8 %}
-        <div style="grid-column: 1 / -1;">
-          {%- include ad-in-article.html -%}
-        </div>
-      {% endif %}
-    {% endfor %}
-  </div>
-  
-  {% if site.posts.size == 0 %}
-    <div style="text-align: center; padding: 3rem; background: #f8f9fa; border-radius: 12px;">
-      <h3 style="color: #5f6368;">No posts yet</h3>
-      <p style="color: #80868b;">New posts will appear here as KB publishes them.</p>
+{% assign featured = site.posts | first %}
+{% assign latest = site.posts | offset: 1 | limit: 6 %}
+<section class="bg-gradient-to-br from-slate-950 to-slate-900">
+  <div class="max-w-6xl mx-auto px-4 pt-10 pb-14 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10">
+    <div class="space-y-4">
+      <p class="text-xs uppercase tracking-[0.25em] text-brand-100">Featured</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight">{{ featured.title }}</h1>
+      <p class="text-lg text-slate-300 max-w-2xl">{{ featured.description | default: featured.excerpt | strip_html | truncate: 180 }}</p>
+      <div class="flex items-center gap-3 text-sm text-slate-300">
+        <span>{{ featured.date | date: "%B %d, %Y" }}</span>
+        <span aria-hidden="true">•</span>
+        <span class="uppercase tracking-wide text-brand-100">{{ featured.lang | default: 'en' }}</span>
+      </div>
+      <a class="inline-flex items-center gap-3 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-brand-500 to-indigo-600 px-4 py-2" href="{{ featured.url | absolute_url }}">Read article
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
     </div>
-  {% endif %}
+    <div class="rounded-3xl border border-white/10 bg-white/5 overflow-hidden">
+      {% if featured.image %}
+      <img class="w-full h-full object-cover" src="{{ featured.image | absolute_url }}" alt="{{ featured.title }}" loading="lazy">
+      {% else %}
+      <div class="h-full w-full bg-gradient-to-br from-brand-500/30 to-indigo-700/30"></div>
+      {% endif %}
+    </div>
+  </div>
 </section>
 
-<!-- Categories Section -->
-<section style="margin-top: 3rem;">
-  <div class="section-header">
-    <h2 class="section-title">Browse by Category</h2>
+<section class="max-w-6xl mx-auto px-4 py-12 space-y-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-brand-100">Latest</p>
+      <h2 class="text-2xl font-semibold text-white">Fresh from the newsroom</h2>
+    </div>
+    <a class="text-sm text-brand-100 hover:text-white" href="{{ '/feed.xml' | absolute_url }}">RSS Feed</a>
   </div>
-  
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-    <a href="#politics" style="text-decoration: none;">
-      <div style="background: rgba(234, 67, 53, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏛️</div>
-        <h3 style="color: #ea4335; margin: 0;">Politics</h3>
+  <div class="grid gap-6 md:grid-cols-3">
+    {% for post in latest %}
+    <a class="group rounded-2xl border border-white/10 bg-white/5 p-4 hover:border-brand-500/60 transition" href="{{ post.url | absolute_url }}">
+      {% if post.image %}
+      <div class="overflow-hidden rounded-xl mb-3">
+        <img class="h-40 w-full object-cover transition group-hover:scale-105" src="{{ post.image | absolute_url }}" alt="{{ post.title }}" loading="lazy">
       </div>
+      {% endif %}
+      <p class="text-xs text-slate-400">{{ post.date | date: "%b %d, %Y" }}</p>
+      <p class="mt-1 font-semibold text-white leading-tight">{{ post.title }}</p>
+      <p class="text-sm text-slate-300 mt-1">{{ post.description | default: post.excerpt | strip_html | truncate: 110 }}</p>
     </a>
-    <a href="#business" style="text-decoration: none;">
-      <div style="background: rgba(26, 115, 232, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💼</div>
-        <h3 style="color: #1a73e8; margin: 0;">Business</h3>
-      </div>
-    </a>
-    <a href="#technology" style="text-decoration: none;">
-      <div style="background: rgba(52, 168, 83, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
-        <h3 style="color: #34a853; margin: 0;">Technology</h3>
-      </div>
-    </a>
-    <a href="#finance" style="text-decoration: none;">
-      <div style="background: rgba(251, 188, 4, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
-        <h3 style="color: #f9ab00; margin: 0;">Finance</h3>
-      </div>
-    </a>
-    <a href="#startups" style="text-decoration: none;">
-      <div style="background: rgba(156, 39, 176, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; transition: transform 0.2s;">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
-        <h3 style="color: #9c27b0; margin: 0;">Startups</h3>
-      </div>
-    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pb-16 space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-brand-100">Browse</p>
+      <h2 class="text-2xl font-semibold text-white">Categories</h2>
+    </div>
+  </div>
+  <div class="grid gap-4 md:grid-cols-3">
+    {% assign categories = site.categories %}
+    {% for category in categories %}
+      <a class="rounded-xl border border-white/10 bg-white/5 p-4 hover:border-brand-500/60 transition" href="{{ '/' | append: category[0] | append: '/' | absolute_url }}">
+        <p class="text-sm font-semibold text-white">{{ category[0] | capitalize }}</p>
+        <p class="text-xs text-slate-400">{{ category[1].size }} articles</p>
+      </a>
+    {% endfor %}
   </div>
 </section>
 

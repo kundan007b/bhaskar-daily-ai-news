@@ -1,0 +1,21 @@
+{% if page.author %}
+  {% assign author = site.data.authors[page.author] %}
+  {% if author %}
+  <aside class="rounded-2xl border border-white/10 bg-white/5 p-6">
+    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+      <img class="h-16 w-16 rounded-full object-cover border border-white/10" src="{{ author.image | absolute_url }}" alt="{{ author.name }}" loading="lazy">
+      <div class="space-y-1">
+        <p class="text-xs uppercase tracking-wide text-brand-100">Author</p>
+        <a class="text-lg font-semibold text-white hover:text-brand-100" href="{{ '/authors/' | append: author.slug | append: '/' | absolute_url }}">{{ author.name }}</a>
+        <p class="text-sm text-slate-300">{{ author.bio }}</p>
+        <div class="flex gap-3 text-sm text-slate-300">
+          {% if author.twitter %}<a class="hover:text-white" href="{{ author.twitter }}" rel="noopener" target="_blank">Twitter</a>{% endif %}
+          {% if author.linkedin %}<a class="hover:text-white" href="{{ author.linkedin }}" rel="noopener" target="_blank">LinkedIn</a>{% endif %}
+          {% if author.email %}<a class="hover:text-white" href="mailto:{{ author.email }}">Email</a>{% endif %}
+          <a class="hover:text-white" href="{{ '/authors/' | append: author.slug | append: '/' | absolute_url }}">View all</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+  {% endif %}
+{% endif %}

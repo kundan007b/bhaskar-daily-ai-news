@@ -8,8 +8,13 @@
 
 <!-- Primary Meta Tags -->
 <meta name="description" content="{{ desc | strip_html | truncate: 160 }}">
-<meta name="keywords" content="{{ page.keywords | default: 'news, bilingual news, India news, technology, business, politics, finance, startups, Hindi news, English news' }}">
-<meta name="author" content="KB">
+<meta name="keywords" content="{{ page.keywords | default: 'technology news, AI, machine learning, startups, cybersecurity, gadgets, India tech news, Hindi tech news, English tech news' }}">
+{%- if page.author -%}
+{%- assign author_data = site.data.authors[page.author] -%}
+<meta name="author" content="{{ author_data.name | default: 'KB Tech News' }}">
+{%- else -%}
+<meta name="author" content="KB Tech News">
+{%- endif -%}
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="googlebot" content="index, follow">
 <meta name="bingbot" content="index, follow">
@@ -49,8 +54,13 @@
 {%- endif -%}
 {%- if page.date -%}
 <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
-<meta property="article:modified_time" content="{{ page.date | date_to_xmlschema }}">
+<meta property="article:modified_time" content="{{ page.last_modified_at | default: page.date | date_to_xmlschema }}">
+{%- if page.author -%}
+{%- assign author_data = site.data.authors[page.author] -%}
+<meta property="article:author" content="{{ site.url }}/authors/{{ author_data.slug }}/">
+{%- else -%}
 <meta property="article:author" content="{{ site.url }}">
+{%- endif -%}
 {%- endif -%}
 {%- if page.category -%}
 <meta property="article:section" content="{{ page.category }}">
@@ -101,26 +111,43 @@
   {%- endif -%}
   {%- if page.date -%}
   "datePublished": "{{ page.date | date_to_xmlschema }}",
-  "dateModified": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
   {%- endif -%}
-  "inLanguage": ["en-IN", "hi-IN"],
-  "articleSection": "{{ page.category | default: 'News' }}",
-  {%- if page.keywords -%}
+  "inLanguage": "{{ page.lang | default: 'en' }}-IN",
+  "articleSection": "{{ page.category | default: 'Technology' }}",
+  {%- if page.news_keywords -%}
+  "keywords": "{{ page.news_keywords }}",
+  {%- elsif page.keywords -%}
   "keywords": "{{ page.keywords }}",
   {%- endif -%}
+  {%- if page.author -%}
+  {%- assign author_data = site.data.authors[page.author] -%}
   "author": {
     "@type": "Person",
-    "name": "KB",
+    "@id": "{{ site.url }}/authors/{{ author_data.slug }}/#author",
+    "name": "{{ author_data.name }}",
+    "url": "{{ site.url }}/authors/{{ author_data.slug }}/",
+    {%- if author_data.email -%}
+    "email": "{{ author_data.email }}",
+    {%- endif -%}
+    "jobTitle": "Technology Journalist"
+  },
+  {%- else -%}
+  "author": {
+    "@type": "Organization",
+    "name": "{{ site.title }}",
     "url": "{{ site.url }}"
   },
+  {%- endif -%}
   "publisher": {
     "@type": "Organization",
+    "@id": "{{ site.url }}/#organization",
     "name": "{{ site.title }}",
     "url": "{{ site.url }}",
     "logo": {
       "@type": "ImageObject",
       "url": "{{ site.url }}/assets/images/logo.png",
-      "width": 250,
+      "width": 600,
       "height": 60
     },
     "contactPoint": {
@@ -128,6 +155,15 @@
       "email": "{{ site.email | default: 'contact@kbhaskar.tech' }}",
       "contactType": "Customer Service",
       "availableLanguage": ["English", "Hindi"]
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "@id": "{{ site.url }}/#website",
+    "url": "{{ site.url }}",
+    "name": "{{ site.title }}",
+    "publisher": {
+      "@id": "{{ site.url }}/#organization"
     }
   },
   "mainEntityOfPage": {
@@ -148,13 +184,6 @@
   "copyrightHolder": {
     "@type": "Organization",
     "name": "{{ site.title }}"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.5",
-    "reviewCount": "1",
-    "bestRating": "5",
-    "worstRating": "1"
   }
 }
 </script>

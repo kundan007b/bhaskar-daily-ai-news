@@ -1,0 +1,23 @@
+rajesh-kumar:
+  name: "Rajesh Kumar"
+  slug: "rajesh-kumar"
+  bio: "Covers AI, cloud, and developer tooling with a focus on India’s enterprise stack."
+  role: "Senior Editor"
+  location: "Bengaluru, India"
+  expertise: ["AI/ML", "Cloud", "Enterprise"]
+  image: "/assets/images/authors/rajesh-kumar.svg"
+  twitter: "https://twitter.com/rajeshkumar"
+  linkedin: "https://www.linkedin.com/in/rajeshkumar"
+  email: "rajesh@kbhaskar.tech"
+
+ananya-singh:
+  name: "Ananya Singh"
+  slug: "ananya-singh"
+  bio: "Reports on cybersecurity, policy, and startup risk, publishing in English and Hindi."
+  role: "Reporter"
+  location: "New Delhi, India"
+  expertise: ["Cybersecurity", "Policy", "Startups"]
+  image: "/assets/images/authors/ananya-singh.svg"
+  twitter: "https://twitter.com/ananyacyber"
+  linkedin: "https://www.linkedin.com/in/ananyasingh"
+  email: "ananya@kbhaskar.tech"

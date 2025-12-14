@@ -1,0 +1,48 @@
+{%- if page.layout == 'post' -%}
+  {%- comment -%} Google News: structured data required for NewsArticle {%- endcomment -%}
+  {%- assign author = site.data.authors[page.author] -%}
+  {%- assign headline_text = page.title | truncate: 60 -%}
+  {%- assign published = page.date | date_to_xmlschema -%}
+  {%- assign modified = page.last_modified_at | default: page.date | date_to_xmlschema -%}
+  {%- assign image_url = page.image | default: '/assets/images/default-og.svg' | absolute_url -%}
+  {%- assign author_url = author.slug | prepend: '/authors/' | append: '/' | absolute_url -%}
+  {%- assign keywords = page.news_keywords | default: page.tags | array_to_sentence_string -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "@id": "{{ page.url | absolute_url }}#article",
+    "headline": {{ headline_text | jsonify }},
+    "datePublished": "{{ published }}",
+    "dateModified": "{{ modified }}",
+    "author": {
+      "@type": "Person",
+      "name": {{ author.name | default: "KB Tech News" | jsonify }},
+      "url": {{ author_url | jsonify }}
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": {{ site.publication_name | default: site.title | jsonify }},
+      "logo": {
+        "@type": "ImageObject",
+        "url": {{ '/assets/images/logo.svg' | absolute_url | jsonify }},
+        "width": 600,
+        "height": 60
+      }
+    },
+    "image": {
+      "@type": "ImageObject",
+      "url": {{ image_url | jsonify }},
+      "width": 1200,
+      "height": 630
+    },
+    "description": {{ page.description | default: page.excerpt | strip_html | strip_newlines | truncate: 160 | jsonify }},
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": {{ page.url | absolute_url | jsonify }}
+    },
+    "articleSection": {{ page.categories | first | default: "Technology" | jsonify }},
+    "keywords": {{ keywords | default: "technology" | jsonify }}
+  }
+  </script>
+{%- endif -%}

@@ -1,78 +1,89 @@
 ---
 layout: default
 ---
+{% assign author = site.data.authors[page.author] %}
+{% include schema-jsonld.html %}
 
-<article class="post-article">
-  <header class="post-head">
-    <h1 class="post-title">{{ page.title }}</h1>
-    <div class="post-meta">
-      <span class="badge">{{ page.category }}</span>
-      <span id="reading-time">· </span>
-      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+<article class="max-w-4xl mx-auto px-4 py-12">
+  <header class="space-y-4">
+    <div class="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-brand-100">
+      {% if page.categories %}
+        {% for cat in page.categories %}
+          <span class="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1">{{ cat }}</span>
+        {% endfor %}
+      {% endif %}
+      {% if page.lang == 'hi' %}
+        <span class="inline-flex items-center rounded-full bg-white/10 px-3 py-1">हिन्दी</span>
+      {% endif %}
+    </div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight {% if page.lang == 'hi' %}devanagari{% endif %}">{{ page.title }}</h1>
+    <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+      {% if author %}
+      <a class="flex items-center gap-3 hover:text-white" href="{{ author.url | default: author.slug | prepend: '/authors/' | append: '/' | absolute_url }}">
+        <img class="h-10 w-10 rounded-full object-cover border border-white/10" src="{{ author.image | absolute_url }}" alt="{{ author.name }}" loading="lazy">
+        <div>
+          <p class="font-semibold">{{ author.name }}</p>
+          <p class="text-xs text-slate-400">{{ author.role | default: "Tech Reporter" }}</p>
+        </div>
+      </a>
+      {% endif %}
+      <div class="flex items-center gap-2 text-xs text-slate-400">
+        <span aria-hidden="true">•</span>
+        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+        {% if page.last_modified_at %}
+          <span class="text-slate-500">(Updated {{ page.last_modified_at | date: "%B %d, %Y" }})</span>
+        {% endif %}
+      </div>
     </div>
     {% if page.image %}
-      <figure class="post-figure">
-        <img src="{{ page.image | relative_url }}" alt="{{ page.image_alt | default: page.title }}" loading="lazy" decoding="async" />
-        {% if page.image_alt %}<figcaption>{{ page.image_alt }}</figcaption>{% endif %}
-      </figure>
+    <figure class="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+      <img src="{{ page.image | absolute_url }}" alt="{{ page.image_alt | default: page.title }}" class="w-full h-auto object-cover" loading="lazy" decoding="async">
+    </figure>
     {% endif %}
   </header>
 
-  <nav id="toc" class="toc"></nav>
+  <div class="mt-8 grid grid-cols-1 lg:grid-cols-[minmax(0,_1fr)_260px] gap-8">
+    <div class="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-200 prose-a:text-brand-100 prose-strong:text-white prose-img:rounded-xl">
+      <div class="{% if page.lang == 'hi' %}devanagari{% endif %}">
+        {{ content }}
+      </div>
+    </div>
+    <aside class="space-y-4 lg:sticky lg:top-24 self-start">
+      {% include social-share.html %}
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <h2 class="text-sm font-semibold text-white mb-3">Key points</h2>
+        <ul class="space-y-2 text-sm text-slate-300">
+          {% if page.key_takeaways %}
+            {% for point in page.key_takeaways %}
+              <li class="flex gap-2"><span class="text-brand-100">•</span><span>{{ point }}</span></li>
+            {% endfor %}
+          {% else %}
+            <li class="flex gap-2"><span class="text-brand-100">•</span><span>Fast, verified update from KB Tech News.</span></li>
+          {% endif %}
+        </ul>
+      </div>
+    </aside>
+  </div>
 
-  <section id="content-en" class="post-content">
-    {{ content }}
-  </section>
+  <div class="mt-10">{% include author-box.html %}</div>
 
-  {% if page.body_hi %}
-  <hr>
-  <section id="content-hi" class="post-content hi">
-    {{ page.body_hi | markdownify }}
-  </section>
-  {% endif %}
-
-  {% if page.keywords %}
-  <footer class="post-footer">
-    <div class="keywords">
-      {% assign tags = page.keywords | split: ',' %}
-      {% for t in tags %}
-        {% assign tag = t | strip %}
-        {% if tag != "" %}<span class="chip">{{ tag }}</span>{% endif %}
+  {% assign related_posts = site.posts | where_exp: "item", "item.url != page.url" | where: "lang", page.lang | limit: 3 %}
+  {% if related_posts.size > 0 %}
+  <section class="mt-12">
+    <h2 class="text-xl font-semibold text-white mb-4">Related articles</h2>
+    <div class="grid gap-4 md:grid-cols-3">
+      {% for post in related_posts %}
+      <a class="group rounded-xl border border-white/5 bg-white/5 p-4 hover:border-brand-500/60 transition" href="{{ post.url | absolute_url }}">
+        {% if post.image %}
+        <div class="overflow-hidden rounded-lg mb-3">
+          <img class="w-full h-32 object-cover group-hover:scale-105 transition" src="{{ post.image | absolute_url }}" alt="{{ post.title }}" loading="lazy">
+        </div>
+        {% endif %}
+        <p class="text-xs text-slate-400">{{ post.date | date: "%b %d, %Y" }}</p>
+        <p class="mt-1 font-semibold text-white leading-tight">{{ post.title }}</p>
+      </a>
       {% endfor %}
     </div>
-  </footer>
+  </section>
   {% endif %}
 </article>
-
-<!-- Comments Section -->
-{% include comments.html %}
-
-<script>
-  // Reading time (client-side, no plugins)
-  (function(){
-    const el = document.querySelector(".post-content");
-    if(!el) return;
-    const text = el.textContent || "";
-    const words = text.trim().split(/\s+/).length;
-    const mins = Math.max(1, Math.round(words/200));
-    const rt = document.getElementById("reading-time");
-    if(rt) rt.textContent = `· ${mins} min read · `;
-  })();
-
-  // Build TOC from h2/h3
-  (function(){
-    const area = document.querySelector(".post-content");
-    const toc = document.getElementById("toc");
-    if(!area || !toc) return;
-    const hs = area.querySelectorAll("h2, h3");
-    if(!hs.length) return;
-    let html = '<div class="toc-title">On this page</div><ul>';
-    hs.forEach(h=>{
-      const id = h.id || h.textContent.trim().toLowerCase().replace(/[^\w\s-]/g,"").replace(/\s+/g,"-");
-      h.id = id;
-      html += `<li class="${h.tagName==='H3'?'child':''}"><a href="#${id}">${h.textContent}</a></li>`;
-    });
-    html += '</ul>';
-    toc.innerHTML = html;
-  })();
-</script>

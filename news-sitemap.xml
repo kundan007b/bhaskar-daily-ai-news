@@ -1,0 +1,29 @@
+---
+layout: none
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Google News sitemap: only last 48 hours -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  {% comment %} Google News requires 48-hour window {% endcomment %}
+  {% assign cutoff = site.time | date: '%s' | minus: 172800 %}
+  {% for post in site.posts %}
+    {% assign post_time = post.date | date: '%s' | plus: 0 %}
+    {% if post_time >= cutoff %}
+    <url>
+      <loc>{{ post.url | absolute_url }}</loc>
+      <news:news>
+        <news:publication>
+          <news:name>{{ site.publication_name | default: site.title }}</news:name>
+          <news:language>{{ post.lang | default: site.lang | default: 'en' }}</news:language>
+        </news:publication>
+        <news:publication_date>{{ post.date | date_to_xmlschema }}</news:publication_date>
+        <news:title>{{ post.title | escape }}</news:title>
+        {% assign kw_source = post.news_keywords | default: post.tags %}
+        {% assign kw_list = kw_source | split: ',' %}
+        <news:keywords>{{ kw_list | map: 'strip' | join: ', ' }}</news:keywords>
+      </news:news>
+    </url>
+    {% endif %}
+  {% endfor %}
+</urlset>

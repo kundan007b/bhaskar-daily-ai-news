@@ -1,34 +1,57 @@
-title: "Bhaskar Daily News"
-description: "Bilingual (English & हिन्दी) news on politics, business, tech, finance & startups — written by KB with regular updates."
+title: "KB Tech News"
+description: "Technology news in English and Hindi covering AI, startups, gadgets, cybersecurity, cloud, and emerging tech in India."
+tagline: "Tech journalism for India — bilingual"
 url: "https://www.kbhaskar.tech"
-plugins: [jekyll-feed, jekyll-sitemap]
+baseurl: ""
+
+# Google News configuration
+publication_name: "KB Tech News"
+lang: "en"
+timezone: Asia/Kolkata
+
+# Jekyll configuration
 markdown: kramdown
+permalink: "/:categories/:title/"
 paginate: 12
-paginate_path: "/page:num"
+paginate_path: "/page/:num/"
+plugins:
+  - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-paginate
 
-# Google Analytics (replace with your actual tracking ID)
-# Get your tracking ID from: https://analytics.google.com
-# Format: G-XXXXXXXXXX (GA4) or UA-XXXXXXXXX-X (Universal Analytics)
-google_analytics: "G-7EVJ63K77Y"  # Google Analytics tracking ID
-
-# AdSense Configuration (replace with your actual client ID)
-# Get your AdSense ID from: https://www.google.com/adsense
-# Format: ca-pub-XXXXXXXXXXXXXXXX (16 digits)
-adsense_client_id: "ca-pub-7621715019000629"  # Your AdSense Publisher ID
-adsense_enabled: true
-
-# Social & Contact
-email: contact@kbhaskar.tech
-github_username: kundan007b
-# twitter_username: your_twitter
+collections:
+  authors:
+    output: true
+    permalink: /authors/:path/
 
 defaults:
-  - scope: { path: "" }
-    values: { layout: "post" }
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      lang: "en"
+      image: "/assets/images/default-og.svg"
+  - scope:
+      path: "authors"
+      type: "authors"
+    values:
+      layout: "author"
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
 
-include: [_includes/adsense.html, _includes/seo.html, _includes/lang-toggle.html, _includes/analytics.html]
+# Social & contact
+email: contact@kbhaskar.tech
+twitter_username: kbtechnews
+github_username: kundan007b
 
-# Exclude from build
+# Analytics (replace with your own)
+google_analytics: "G-XXXXXXXXXX"
+
 exclude:
   - requirements.txt
   - scripts/
@@ -37,4 +60,9 @@ exclude:
   - Gemfile.lock
   - .gitignore
   - .github/
+  - vendor/
+  - node_modules/
+
+feed:
+  path: feed.xml
 

@@ -1,0 +1,23 @@
+---
+layout: default
+title: KB Tech News Authors
+description: Meet the bilingual tech journalists behind KB Tech News.
+permalink: /authors/
+---
+<section class="max-w-5xl mx-auto px-4 py-12 space-y-6">
+  <p class="text-xs uppercase tracking-[0.3em] text-brand-100">Team</p>
+  <h1 class="text-3xl font-bold text-white">Meet our journalists</h1>
+  <div class="grid gap-6 md:grid-cols-2">
+    {% for author_hash in site.data.authors %}
+      {% assign author = author_hash[1] %}
+      <a class="group rounded-2xl border border-white/10 bg-white/5 p-5 flex gap-4 hover:border-brand-500/60 transition" href="{{ '/authors/' | append: author.slug | append: '/' | absolute_url }}">
+        <img class="h-16 w-16 rounded-full object-cover border border-white/10" src="{{ author.image | absolute_url }}" alt="{{ author.name }}" loading="lazy">
+        <div class="space-y-1">
+          <p class="text-lg font-semibold text-white">{{ author.name }}</p>
+          <p class="text-sm text-slate-300">{{ author.bio }}</p>
+          <p class="text-xs text-slate-400">Focus: {{ author.expertise | array_to_sentence_string }}</p>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
