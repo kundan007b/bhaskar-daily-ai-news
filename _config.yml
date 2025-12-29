@@ -49,8 +49,8 @@ email: contact@kbhaskar.tech
 twitter_username: kbtechnews
 github_username: kundan007b
 
-# Analytics (replace with your own)
-google_analytics: "G-XXXXXXXXXX"
+# Analytics (replace with your own when ready)
+# google_analytics: "G-XXXXXXXXXX"
 
 exclude:
   - requirements.txt
