@@ -3,17 +3,18 @@ layout: post
 title: "ISRO Deploys AI Guardian: New System to Shield Indian Satellites from Space Debris"
 author: rajesh-kumar
 categories: [AI, Technology]
-image: /assets/images/posts/isro-ai-guardian.jpg
+image: /assets/images/posts/isro-ai-guardian.svg
 image_alt: "ISRO AI Guardian system protecting satellites in orbit"
 lang: en
 date: 2026-01-02
-excerpt: "ISRO launches groundbreaking AI-powered satellite protection system to detect and track space debris threats"
-news_keywords: "ISRO, AI, space debris, satellite protection, India, space technology"
+description: "ISRO launches groundbreaking AI-powered satellite protection system to detect and track space debris threats"
+news_keywords: ["ISRO", "AI", "space debris", "satellite protection", "India", "space technology"]
 tags: [ISRO, AI, Satellite, Space, India]
 key_takeaways:
   - ISRO introduces AI Guardian system for real-time space debris tracking
   - Machine learning algorithms detect collision threats with 99.2% accuracy
   - System protects Rs. 1,000+ crore satellite infrastructure
+last_modified_at: 2026-01-02 10:00:00 +05:30
 ---
 
 ## ISRO's Revolutionary AI Guardian System

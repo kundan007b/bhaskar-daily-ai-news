@@ -225,18 +225,25 @@ document.getElementById('articleForm').addEventListener('submit', async function
     // Create date string
     const today = new Date();
     const dateStr = today.toISOString().split('T')[0];
+    const timeStr = today.toTimeString().split(' ')[0];
     
     // Build front matter
     let frontMatter = '---\n';
     frontMatter += `layout: post\n`;
     frontMatter += `title: "${title}"\n`;
+    frontMatter += `description: "${excerpt || title}"\n`;
     frontMatter += `author: ${author}\n`;
     frontMatter += `categories: [${categories.join(', ')}]\n`;
     if (image) frontMatter += `image: ${image}\n`;
     frontMatter += `lang: ${language}\n`;
     frontMatter += `date: ${dateStr}\n`;
-    if (keywords) frontMatter += `news_keywords: "${keywords}"\n`;
-    if (excerpt) frontMatter += `excerpt: "${excerpt}"\n`;
+    if (keywords) {
+      // Convert comma-separated string to array format
+      const keywordArray = keywords.split(',').map(k => `"${k.trim()}"`).join(', ');
+      frontMatter += `news_keywords: [${keywordArray}]\n`;
+    }
+    frontMatter += `tags: [${categories.join(', ')}]\n`;
+    frontMatter += `last_modified_at: ${dateStr} ${timeStr} +05:30\n`;
     frontMatter += '---\n\n';
     
     // Combine front matter and content
