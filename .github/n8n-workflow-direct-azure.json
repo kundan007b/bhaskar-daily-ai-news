@@ -1,0 +1,174 @@
+{
+  "name": "Autonomous Blog Publisher - Direct to Azure (No GitHub)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "cronExpression": "0 0,4,8,12,16,20 * * *",
+              "triggerAtHour": 0,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "name": "Schedule: Every 4 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "schedule-trigger"
+    },
+    {
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "model": "gpt-4-turbo-preview",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a professional tech journalist writing for an Indian technology news website. Generate unique, newsworthy articles that comply with Google News guidelines. Always respond with valid JSON only."
+            },
+            {
+              "role": "user",
+              "content": "Generate a unique technology news article for Indian readers. Choose a trending topic from: AI, startups, cybersecurity, gadgets, cloud computing, or data science.\n\nRequirements:\n- Focus on recent news (last 24-48 hours)\n- Indian perspective and relevance\n- Professional, factual tone\n- 1200-1500 words\n- SEO optimized\n- Include both English and Hindi versions\n\nRespond with ONLY this JSON structure (no markdown, no explanations):\n{\n  \"title\": \"Engaging title 50-60 chars with keyword\",\n  \"title_hi\": \"हिंदी शीर्षक\",\n  \"excerpt\": \"Meta description 150-160 characters\",\n  \"excerpt_hi\": \"हिंदी सारांश 150-160 अक्षर\",\n  \"content\": \"Full markdown article with ## headers\",\n  \"content_hi\": \"पूर्ण हिंदी लेख markdown में\",\n  \"category\": \"ai|technology|startups|cybersecurity|gadgets|software|cloud|data-science\",\n  \"tags\": \"tag1, tag2, tag3, tag4, tag5\",\n  \"keywords\": \"kw1, kw2, kw3, kw4, kw5\",\n  \"author\": \"rajesh-kumar\",\n  \"image\": \"https://picsum.photos/1200/630\"\n}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "name": "AI: Generate Article",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "1",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse AI response\nconst aiResponse = $input.first().json.message.content;\nconst article = JSON.parse(aiResponse);\n\n// Get current date\nconst now = new Date();\nconst dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD\nconst timestamp = now.toISOString().replace('T', ' ').substring(0, 19) + ' +0530';\n\n// Create slug\nfunction slugify(text) {\n  return text\n    .toLowerCase()\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/[\\s_-]+/g, '-')\n    .replace(/^-+|-+$/g, '');\n}\n\nconst slug = slugify(article.title);\nconst filename = `${dateStr}-${slug}.md`;\n\n// Parse tags and keywords\nconst tags = article.tags\n  .split(',')\n  .map(t => `  - ${t.trim()}`)\n  .join('\\n');\n\nconst keywords = article.keywords\n  .split(',')\n  .map(k => `  - ${k.trim()}`)\n  .join('\\n');\n\n// Build frontmatter\nconst frontmatter = `---\nlayout: post\ntitle: \"${article.title}\"\ntitle_hi: \"${article.title_hi}\"\nexcerpt: \"${article.excerpt}\"\nexcerpt_hi: \"${article.excerpt_hi}\"\nauthor: ${article.author}\ndate: ${timestamp}\ncategories:\n  - ${article.category}\ntags:\n${tags}\nkeywords:\n${keywords}\nimage: \"${article.image}\"\nlang: en\nlang_alternate: hi\n---\n\n${article.content}\n\n## हिंदी में (In Hindi)\n\n${article.content_hi}\n`;\n\nreturn {\n  json: {\n    filename: filename,\n    filepath: `_posts/${filename}`,\n    content: frontmatter,\n    title: article.title,\n    category: article.category\n  }\n};"
+      },
+      "name": "Code: Build Post File",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "command": "#!/bin/bash\nset -e\n\n# Working directory for blog\nWORK_DIR=\"/tmp/blog-site\"\nmkdir -p $WORK_DIR\ncd $WORK_DIR\n\n# Initialize if needed (first run)\nif [ ! -f \"_config.yml\" ]; then\n  echo \"Setting up Jekyll site structure...\"\n  \n  # Copy all files from repository (this should be pre-configured)\n  # For first run, you need to manually copy your Jekyll site to /tmp/blog-site\n  # Or mount it as a volume in N8N Docker\n  \n  echo \"Warning: Jekyll site not found. Make sure to mount your site at $WORK_DIR\"\n  exit 1\nfi\n\n# Create _posts directory if not exists\nmkdir -p _posts\n\n# Save the new post\nFILEPATH=\"{{ $json.filepath }}\"\necho '{{ $json.content }}' > \"$FILEPATH\"\n\necho \"✅ Post file created: $FILEPATH\"\nls -lh \"$FILEPATH\""
+      },
+      "name": "Save: Create Post File",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "command": "#!/bin/bash\nset -e\n\nWORK_DIR=\"/tmp/blog-site\"\ncd $WORK_DIR\n\necho \"📦 Installing Jekyll dependencies...\"\nbundle install --quiet\n\necho \"🔨 Building Jekyll site...\"\nJEKYLL_ENV=production bundle exec jekyll build\n\n# Verify build\nif [ -d \"_site\" ]; then\n  FILE_COUNT=$(find _site -type f | wc -l)\n  echo \"✅ Jekyll build successful: $FILE_COUNT files generated\"\nelse\n  echo \"❌ Jekyll build failed: _site directory not found\"\n  exit 1\nfi"
+      },
+      "name": "Jekyll: Build Site",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "command": "#!/bin/bash\nset -e\n\nWORK_DIR=\"/tmp/blog-site\"\ncd $WORK_DIR\n\necho \"🚀 Deploying to Azure Static Web Apps...\"\n\n# Deploy using Azure Static Web Apps CLI\nswa deploy _site \\\n  --deployment-token \"{{ $env.AZURE_DEPLOYMENT_TOKEN }}\" \\\n  --env production \\\n  --no-use-keychain\n\nif [ $? -eq 0 ]; then\n  echo \"✅ Deployment to Azure successful!\"\n  echo \"Site: https://{{ $env.AZURE_APP_NAME }}.azurestaticapps.net\"\n  echo \"Custom domain: https://kbhaskar.tech\"\nelse\n  echo \"❌ Deployment failed\"\n  exit 1\nfi"
+      },
+      "name": "Azure: Deploy Site",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    }
+  ],
+  "connections": {
+    "Schedule: Every 4 Hours": {
+      "main": [
+        [
+          {
+            "node": "AI: Generate Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI: Generate Article": {
+      "main": [
+        [
+          {
+            "node": "Code: Build Post File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Build Post File": {
+      "main": [
+        [
+          {
+            "node": "Save: Create Post File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save: Create Post File": {
+      "main": [
+        [
+          {
+            "node": "Jekyll: Build Site",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jekyll: Build Site": {
+      "main": [
+        [
+          {
+            "node": "Azure: Deploy Site",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "Asia/Kolkata",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "automation",
+      "id": "1"
+    },
+    {
+      "name": "blog",
+      "id": "2"
+    },
+    {
+      "name": "azure",
+      "id": "3"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-02T00:00:00.000Z",
+  "versionId": "2"
+}

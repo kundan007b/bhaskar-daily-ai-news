@@ -2,12 +2,12 @@
 layout: none
 ---
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Google News sitemap: only last 48 hours -->
+<!-- Google News sitemap: optimized for 6 daily articles, last 48 hours -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
-  {% comment %} Google News requires 48-hour window {% endcomment %}
+  {% comment %} Google News requires 48-hour window for news articles {% endcomment %}
   {% assign cutoff = site.time | date: '%s' | minus: 172800 %}
-  {% for post in site.posts %}
+  {% for post in site.posts limit:1000 %}
     {% assign post_time = post.date | date: '%s' | plus: 0 %}
     {% if post_time >= cutoff %}
     <url>
@@ -19,9 +19,12 @@ layout: none
         </news:publication>
         <news:publication_date>{{ post.date | date_to_xmlschema }}</news:publication_date>
         <news:title>{{ post.title | escape }}</news:title>
-        {% assign kw_source = post.news_keywords | default: post.tags %}
-        {% assign kw_list = kw_source | split: ',' %}
-        <news:keywords>{{ kw_list | map: 'strip' | join: ', ' }}</news:keywords>
+        {% if post.keywords %}
+          {% assign kw_list = post.keywords | join: ', ' %}
+          <news:keywords>{{ kw_list }}</news:keywords>
+        {% elsif post.tags %}
+          <news:keywords>{{ post.tags | join: ', ' }}</news:keywords>
+        {% endif %}
       </news:news>
     </url>
     {% endif %}

@@ -1,14 +1,19 @@
-# robots.txt for Bhaskar Daily AI News
+# robots.txt for KB Tech News
 # https://kbhaskar.tech
 
 User-agent: *
 Allow: /
+Disallow: /admin/
 Disallow: /scripts/
 Disallow: /.github/
 Disallow: /assets/css/*.map
 
 # Special rules for major search engines
 User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot-News
 Allow: /
 Crawl-delay: 0
 
@@ -23,9 +28,10 @@ User-agent: Slurp
 Allow: /
 Crawl-delay: 1
 
-# Sitemap location
+# Sitemap location (update domain after Azure deployment)
 Sitemap: https://kbhaskar.tech/sitemap.xml
 Sitemap: https://kbhaskar.tech/news-sitemap.xml
+Sitemap: https://kbhaskar.tech/feed.xml
 
 # Do not index admin panel
 Disallow: /admin/

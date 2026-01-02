@@ -9,6 +9,20 @@ publication_name: "KB Tech News"
 lang: "en"
 timezone: Asia/Kolkata
 
+# Google News & SEO optimization
+google_news:
+  enabled: true
+  sitemap_limit: 1000  # Include up to 1000 recent articles
+  sitemap_days: 2  # Articles from last 2 days in news sitemap
+
+# SEO defaults
+seo:
+  type: "NewsMediaOrganization"
+  name: "KB Tech News"
+  links:
+    - "https://www.kbhaskar.tech"
+    - "https://twitter.com/kbtechnews"
+
 # Jekyll configuration
 markdown: kramdown
 permalink: "/:categories/:title/"
