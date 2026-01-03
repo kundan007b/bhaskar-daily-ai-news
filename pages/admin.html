@@ -117,6 +117,20 @@ robots: noindex, nofollow
           <input type="text" id="image" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="/assets/images/posts/image.jpg">
         </div>
 
+        <!-- Image Upload -->
+        <div>
+          <label for="imageFile" class="block text-sm font-medium text-gray-700 mb-2">Or Upload Featured Image</label>
+          <input type="file" id="imageFile" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="w-full text-sm text-gray-700 border border-dashed border-gray-300 rounded-lg cursor-pointer bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+          <p class="text-xs text-gray-500 mt-2">Images save to <code>/assets/images/posts/</code>. Use descriptive filenames under 1&nbsp;MB.</p>
+          <div id="imagePreview" class="hidden mt-3 border border-gray-200 rounded-xl overflow-hidden"></div>
+        </div>
+
+        <!-- Image Alt -->
+        <div>
+          <label for="imageAlt" class="block text-sm font-medium text-gray-700 mb-2">Image Alt Text</label>
+          <input type="text" id="imageAlt" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Describe what appears in the image">
+        </div>
+
         <!-- Excerpt -->
         <div>
           <label for="excerpt" class="block text-sm font-medium text-gray-700 mb-2">Excerpt (Optional)</label>
@@ -149,6 +163,16 @@ robots: noindex, nofollow
 </div>
 
 <script>
+const OWNER = 'kundan007b';
+const REPO = 'bhaskar-daily-ai-news';
+const BRANCH = 'main';
+
+const articleForm = document.getElementById('articleForm');
+const imageFileInput = document.getElementById('imageFile');
+const imagePreview = document.getElementById('imagePreview');
+const imageAltInput = document.getElementById('imageAlt');
+const imageUrlInput = document.getElementById('image');
+
 // Authentication
 function login() {
   const userId = document.getElementById('userId').value;
@@ -182,20 +206,22 @@ window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('uploadSection').classList.remove('hidden');
   }
   
-  // Auto-generate slug from title
-  document.getElementById('title').addEventListener('input', function() {
-    const slug = this.value
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-    document.getElementById('slug').value = slug;
-  });
+  const titleInput = document.getElementById('title');
+  const slugInput = document.getElementById('slug');
+  if (titleInput && slugInput) {
+    titleInput.addEventListener('input', function() {
+      const slug = sanitizeSlug(this.value);
+      slugInput.value = slug;
+    });
+  }
+
+  if (imageFileInput) {
+    imageFileInput.addEventListener('change', handleImageSelection);
+  }
 });
 
 // Form submission
-document.getElementById('articleForm').addEventListener('submit', async function(e) {
+articleForm.addEventListener('submit', async function(e) {
   e.preventDefault();
   
   const uploadError = document.getElementById('uploadError');
@@ -204,20 +230,29 @@ document.getElementById('articleForm').addEventListener('submit', async function
   uploadSuccess.classList.add('hidden');
   
   try {
-    // Get form data
-    const title = document.getElementById('title').value;
-    const slug = document.getElementById('slug').value;
+    const title = document.getElementById('title').value.trim();
+    const slug = sanitizeSlug(document.getElementById('slug').value || title);
     const author = document.getElementById('author').value;
     const language = document.getElementById('language').value;
     const keywords = document.getElementById('keywords').value;
-    const image = document.getElementById('image').value;
-    const excerpt = document.getElementById('excerpt').value;
-    const content = document.getElementById('content').value;
+    const excerpt = document.getElementById('excerpt').value.trim();
+    const content = document.getElementById('content').value.trim();
+    const imageAlt = imageAltInput.value.trim();
+    const manualImagePath = imageUrlInput.value.trim();
     
+    if (!title) {
+      throw new Error('Title is required');
+    }
+    if (!slug) {
+      throw new Error('URL slug cannot be empty');
+    }
+    if (!content) {
+      throw new Error('Article content is required');
+    }
+
     // Get selected categories
     const categoryCheckboxes = document.querySelectorAll('input[name="category"]:checked');
-    const categories = Array.from(categoryCheckboxes).map(cb => cb.value);
-    
+    const categories = Array.from(categoryCheckboxes).map(cb => cb.value.trim()).filter(Boolean);
     if (categories.length === 0) {
       throw new Error('Please select at least one category');
     }
@@ -226,39 +261,53 @@ document.getElementById('articleForm').addEventListener('submit', async function
     const today = new Date();
     const dateStr = today.toISOString().split('T')[0];
     const timeStr = today.toTimeString().split(' ')[0];
-    
+
+    // GitHub token (prompt once)
+    const token = await getGitHubToken();
+
+    // Upload image if needed
+    let finalImagePath = manualImagePath;
+    if (!finalImagePath && imageFileInput.files.length > 0) {
+      finalImagePath = await uploadImageFile(imageFileInput.files[0], slug, dateStr, token);
+      imageUrlInput.value = finalImagePath;
+    }
+    if (!finalImagePath) {
+      throw new Error('Add a featured image URL or upload a file.');
+    }
+
+    const keywordArray = keywords.split(',').map(k => k.trim()).filter(Boolean);
+
     // Build front matter
     let frontMatter = '---\n';
     frontMatter += `layout: post\n`;
-    frontMatter += `title: "${title}"\n`;
-    frontMatter += `description: "${excerpt || title}"\n`;
+    frontMatter += `title: "${sanitizeYaml(title)}"\n`;
+    frontMatter += `description: "${sanitizeYaml(excerpt || title)}"\n`;
     frontMatter += `author: ${author}\n`;
-    frontMatter += `categories: [${categories.join(', ')}]\n`;
-    if (image) frontMatter += `image: ${image}\n`;
+    frontMatter += `categories: [${quoteArray(categories)}]\n`;
+    frontMatter += `image: ${finalImagePath}\n`;
+    if (imageAlt) {
+      frontMatter += `image_alt: "${sanitizeYaml(imageAlt)}"\n`;
+    }
     frontMatter += `lang: ${language}\n`;
     frontMatter += `date: ${dateStr}\n`;
-    if (keywords) {
-      // Convert comma-separated string to array format
-      const keywordArray = keywords.split(',').map(k => `"${k.trim()}"`).join(', ');
-      frontMatter += `news_keywords: [${keywordArray}]\n`;
+    if (keywordArray.length > 0) {
+      frontMatter += `news_keywords: [${quoteArray(keywordArray)}]\n`;
     }
-    frontMatter += `tags: [${categories.join(', ')}]\n`;
+    frontMatter += `tags: [${quoteArray(categories)}]\n`;
+    if (excerpt) {
+      frontMatter += `excerpt: "${sanitizeYaml(excerpt)}"\n`;
+    }
     frontMatter += `last_modified_at: ${dateStr} ${timeStr} +05:30\n`;
     frontMatter += '---\n\n';
     
-    // Combine front matter and content
-    const fullContent = frontMatter + content;
-    
-    // Create filename
+    const fullContent = frontMatter + content + '\n';
     const filename = `${dateStr}-${slug}.md`;
     
-    // GitHub API upload
-    await uploadToGitHub(filename, fullContent);
+    await uploadArticleFile(filename, fullContent, token);
     
     uploadSuccess.innerHTML = `✅ <strong>Article published successfully!</strong><br>Filename: ${filename}<br>GitHub Pages will rebuild in 1-2 minutes.`;
     uploadSuccess.classList.remove('hidden');
     
-    // Reset form after 3 seconds
     setTimeout(() => {
       resetForm();
       uploadSuccess.classList.add('hidden');
@@ -270,31 +319,44 @@ document.getElementById('articleForm').addEventListener('submit', async function
   }
 });
 
-async function uploadToGitHub(filename, content) {
-  // GitHub Personal Access Token (needs to be set)
-  let token = sessionStorage.getItem('githubToken');
-  
-  if (!token) {
-    token = prompt('Enter your GitHub Personal Access Token (with repo permissions):\n\nCreate one at: https://github.com/settings/tokens\n\nPermissions needed: repo');
-    if (!token) {
-      throw new Error('GitHub token is required to upload articles');
-    }
-    sessionStorage.setItem('githubToken', token);
+async function uploadArticleFile(filename, content, token) {
+  return uploadContentToGitHub({
+    path: `_posts/${filename}`,
+    content,
+    token,
+    createMessage: `Add article: ${filename}`,
+    updateMessage: `Update article: ${filename}`
+  });
+}
+
+async function uploadImageFile(file, slug, dateStr, token) {
+  const allowed = ['png', 'jpg', 'jpeg', 'webp', 'svg'];
+  const extFromName = (file.name.split('.').pop() || '').toLowerCase();
+  const extension = allowed.includes(extFromName) ? extFromName : 'png';
+  if (!allowed.includes(extFromName) && extFromName) {
+    throw new Error('Unsupported image format. Use PNG, JPG, SVG, or WebP.');
   }
-  
-  const owner = 'kundan007b';
-  const repo = 'bhaskar-daily-ai-news';
-  const path = `_posts/${filename}`;
-  const branch = 'main';
-  
-  // Encode content to base64
-  const encodedContent = btoa(unescape(encodeURIComponent(content)));
-  
-  // GitHub API endpoint
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  
-  // Check if file already exists
+
+  const safeSlug = sanitizeSlug(slug);
+  const filename = `${dateStr}-${safeSlug}.${extension}`;
+  const base64Content = await fileToBase64(file);
+
+  await uploadContentToGitHub({
+    path: `assets/images/posts/${filename}`,
+    content: base64Content,
+    token,
+    createMessage: `Add image: ${filename}`,
+    updateMessage: `Update image: ${filename}`,
+    isBase64: true
+  });
+
+  return `/assets/images/posts/${filename}`;
+}
+
+async function uploadContentToGitHub({ path, content, token, createMessage, updateMessage, isBase64 = false }) {
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`;
   let sha = null;
+
   try {
     const checkResponse = await fetch(url, {
       headers: {
@@ -302,27 +364,25 @@ async function uploadToGitHub(filename, content) {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
-    
+
     if (checkResponse.ok) {
       const data = await checkResponse.json();
       sha = data.sha;
     }
-  } catch (error) {
-    // File doesn't exist, which is fine for new articles
+  } catch (_) {
+    // ignore 404 for new files
   }
-  
-  // Create or update file
+
   const payload = {
-    message: `Add article: ${filename}`,
-    content: encodedContent,
-    branch: branch
+    message: sha ? updateMessage : createMessage,
+    content: isBase64 ? content : btoa(unescape(encodeURIComponent(content))),
+    branch: BRANCH
   };
-  
+
   if (sha) {
     payload.sha = sha;
-    payload.message = `Update article: ${filename}`;
   }
-  
+
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -332,23 +392,93 @@ async function uploadToGitHub(filename, content) {
     },
     body: JSON.stringify(payload)
   });
-  
+
   if (!response.ok) {
-    const error = await response.json();
     if (response.status === 401) {
       sessionStorage.removeItem('githubToken');
       throw new Error('Invalid GitHub token. Please try again with a valid token.');
     }
+    const error = await response.json().catch(() => ({}));
     throw new Error(error.message || 'Failed to upload to GitHub');
   }
-  
-  return await response.json();
+
+  return response.json();
+}
+
+async function getGitHubToken() {
+  let token = sessionStorage.getItem('githubToken');
+  if (!token) {
+    token = prompt('Enter your GitHub Personal Access Token (with repo permissions):\n\nCreate one at: https://github.com/settings/tokens\n\nPermissions needed: repo');
+    if (!token) {
+      throw new Error('GitHub token is required to upload content');
+    }
+    sessionStorage.setItem('githubToken', token.trim());
+  }
+  return token;
+}
+
+function handleImageSelection() {
+  if (imageFileInput.files && imageFileInput.files[0]) {
+    const file = imageFileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      imagePreview.innerHTML = `<img src="${event.target.result}" alt="Selected preview" class="w-full h-48 object-cover">`;
+      imagePreview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  } else {
+    clearImagePreview();
+  }
+}
+
+function clearImagePreview() {
+  if (!imagePreview) return;
+  imagePreview.classList.add('hidden');
+  imagePreview.innerHTML = '';
+}
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = () => reject(new Error('Failed to read image file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function sanitizeSlug(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .trim();
+}
+
+function sanitizeYaml(value = '') {
+  return value.replace(/"/g, '\\"').replace(/\r?\n|\r/g, ' ').trim();
+}
+
+function quoteArray(items = []) {
+  return items.map(item => `"${sanitizeYaml(item)}"`).join(', ');
 }
 
 function resetForm() {
-  document.getElementById('articleForm').reset();
+  articleForm.reset();
   const checkboxes = document.querySelectorAll('input[name="category"]');
   checkboxes.forEach(cb => cb.checked = false);
+  if (imageFileInput) {
+    imageFileInput.value = '';
+  }
+  if (imageAltInput) {
+    imageAltInput.value = '';
+  }
+  clearImagePreview();
 }
 
 // Handle Enter key on login
@@ -366,6 +496,13 @@ document.getElementById('password').addEventListener('keypress', function(e) {
 #uploadSection textarea {
   resize: vertical;
   min-height: 100px;
+}
+
+#imagePreview img {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  display: block;
 }
 
 input:focus, textarea:focus, select:focus {
