@@ -15,38 +15,51 @@ These steps provision a free Google Apps Script endpoint that accepts the JSON p
 const SHEET_NAME = 'Subscribers';
 
 function doPost(e) {
-  if (!e || !e.postData || !e.postData.contents) {
-    return _jsonResponse({ success: false, message: 'No payload supplied.' }, 400);
-  }
-
-  let data;
   try {
-    data = JSON.parse(e.postData.contents);
+    if (!e || !e.postData || !e.postData.contents) {
+      return _jsonResponse({ success: false, message: 'No payload supplied.' });
+    }
+
+    let data;
+    try {
+      data = JSON.parse(e.postData.contents);
+    } catch (error) {
+      return _jsonResponse({ success: false, message: 'Invalid JSON.', detail: error.message });
+    }
+
+    const email = (data.email || '').trim().toLowerCase();
+    if (!email) {
+      return _jsonResponse({ success: false, message: 'Email is required.' });
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return _jsonResponse({ success: false, message: 'Invalid email format.' });
+    }
+
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      return _jsonResponse({ success: false, message: 'Sheet not found. Ensure a sheet named "Subscribers" exists.' });
+    }
+
+    sheet.appendRow([
+      new Date(),
+      email,
+      data.page || '',
+      data.userAgent || ''
+    ]);
+
+    return _jsonResponse({ success: true, message: 'Thanks for subscribing!' });
   } catch (error) {
-    return _jsonResponse({ success: false, message: 'Invalid JSON.', detail: error.message }, 400);
+    return _jsonResponse({ success: false, message: 'Server error.', detail: error.toString() });
   }
-
-  const email = (data.email || '').trim().toLowerCase();
-  if (!email) {
-    return _jsonResponse({ success: false, message: 'Email is required.' }, 422);
-  }
-
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-  sheet.appendRow([
-    new Date(),
-    email,
-    data.page || '',
-    data.userAgent || ''
-  ]);
-
-  return _jsonResponse({ success: true, message: 'Subscriber added.' });
 }
 
-function _jsonResponse(payload, statusCode) {
+function _jsonResponse(payload) {
   return ContentService
     .createTextOutput(JSON.stringify(payload))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setStatusCode(statusCode || 200);
+    .setMimeType(ContentService.MimeType.JSON);
 }
 ```
 

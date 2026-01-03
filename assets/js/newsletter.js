@@ -52,12 +52,15 @@
             body: JSON.stringify(payload),
           });
 
-          if (!response.ok) {
-            throw new Error('Request failed');
+          const result = await response.json().catch(() => ({}));
+
+          if (result.success === false) {
+            const errorMsg = result.message || 'Subscription failed.';
+            setStatus(statusEl, 'error', errorMsg);
+            return;
           }
 
-          const result = await response.json().catch(() => ({}));
-          const successMessage = result?.message || 'Thanks! Check your inbox to confirm.';
+          const successMessage = result?.message || 'Thanks for subscribing!';
           setStatus(statusEl, 'success', successMessage);
           form.reset();
         } catch (error) {
