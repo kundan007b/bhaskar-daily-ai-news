@@ -64,7 +64,7 @@ twitter_username: kbtechnews
 github_username: kundan007b
 
 forms:
-  newsletter_endpoint: "https://script.google.com/macros/s/AKfycbyEWNfRn3ao2AwvRQzd_v6Y8wvvzt0JNoSB9wNpB7Sx5ZuSaXij0BeZ2fin5z8G8MmtWg/exec"
+  newsletter_endpoint: "https://script.google.com/macros/s/AKfycbxFBt0wjVY5lmePFg2kfN3P2rJ60sW7QCDuROI-ca8aTXvZPlhP_4y9PXuw1k7TPfqI4w/exec"
 
 # Analytics (replace with your own when ready)
 # google_analytics: "G-XXXXXXXXXX"
