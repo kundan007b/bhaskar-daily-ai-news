@@ -64,8 +64,13 @@
           setStatus(statusEl, 'success', successMessage);
           form.reset();
         } catch (error) {
-          console.error('Newsletter signup failed', error);
-          setStatus(statusEl, 'error', 'Subscription failed. Please try again later.');
+          console.error('Newsletter signup failed:', error);
+          console.error('Endpoint:', endpoint);
+          let errorMsg = 'Subscription failed. Please try again later.';
+          if (error.message && error.message.includes('Failed to fetch')) {
+            errorMsg = 'Network error. Check your connection or try again.';
+          }
+          setStatus(statusEl, 'error', errorMsg);
         } finally {
           toggleButtonState(submitBtn, false);
         }

@@ -66,19 +66,55 @@ function _jsonResponse(payload) {
 3. Press **Ctrl+S** and name the project (e.g., `Newsletter Webhook`).
 
 ## 3. Deploy as a Web App
-1. Click **Deploy → Test deployments → Select type → Web app** (or **Deploy → New Deployment** in the new UI).
-2. Set **Execute as**: `Me`.
-3. Set **Who has access**: `Anyone` (or `Anyone with the link`).
-4. Click **Deploy** and authorize the script when prompted.
-5. Copy the **Web App URL**; it should look like `https://script.google.com/macros/s/DEPLOYMENT_ID/exec`.
+1. Click **Deploy → New deployment** (blue button in top right).
+2. Click the **Select type** gear icon → choose **Web app**.
+3. Configure the deployment:
+   - **Description**: `Newsletter subscriber endpoint`
+   - **Execute as**: `Me` (your account)
+   - **Who has access**: **Anyone** (NOT "Anyone with Google account")
+4. Click **Deploy**.
+5. **Authorize** the script when prompted:
+   - Click "Authorize access"
+   - Select your Google account
+   - Click "Advanced" → "Go to [Project Name] (unsafe)"
+   - Click "Allow"
+6. Copy the **Web app URL** (ends with `/exec`).
+7. **Test immediately** by running this command (replace URL):
+   ```bash
+   curl -L "YOUR_WEB_APP_URL" \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test@example.com","page":"/","userAgent":"curl"}'
+   ```
+   Should return: `{"success":true,"message":"Thanks for subscribing!"}`
 
 ## 4. Wire the site
 1. Update `_config.yml` → `forms.newsletter_endpoint` with the Web App URL you copied.
 2. Commit and redeploy the site. The value is exposed globally via `window.NEWSLETTER_ENDPOINT`, so no further code changes are required.
 
 ## 5. Verify
-1. Open any site page, enter an email, and click **Subscribe**.
-2. Confirm the success toast appears and a new row is recorded in the `Subscribers` sheet.
-3. Optionally, build an Apps Script trigger to send yourself an email notification per signup.
+1. **Test from command line first** (see step 3 above) - if this fails, the web app won't work either.
+2. Open any site page, enter an email, and click **Subscribe**.
+3. Confirm the success toast appears and a new row is recorded in the `Subscribers` sheet.
+4. If you see "Subscription failed":
+   - Open browser DevTools (F12) → Console tab
+   - Try subscribing again and check for CORS errors
+   - Verify the deployment URL in `_config.yml` matches exactly (including `/exec`)
+   - Redeploy the script as a **new version** (Deploy → Manage deployments → Edit → Version: New version)
+
+## Troubleshooting
+
+**"Page not found" or redirect errors**:
+- The deployment URL is wrong or the script isn't properly deployed
+- Redeploy: Deploy → New deployment → Web app
+- Ensure "Who has access" is set to **Anyone** (not "Anyone with Google account")
+
+**CORS errors in browser**:
+- Apps Script must be deployed with "Execute as: Me" and "Who has access: Anyone"
+- Try creating a completely new deployment instead of updating existing one
+
+**Empty endpoint / button disabled**:
+- Check `_config.yml` has `forms.newsletter_endpoint` set
+- Rebuild site: `bundle exec jekyll build`
+- Push changes: `git push origin main`
 
 > Note: Google Apps Script quotas (per-minute executions, daily writes) easily cover typical newsletter volumes. If you expect heavy traffic, consider enabling an external service (Make/Zapier, Cloud Run, etc.) and simply update the endpoint value.
