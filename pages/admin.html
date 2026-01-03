@@ -8,6 +8,15 @@ robots: noindex, nofollow
 <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-4xl mx-auto">
     
+    <!-- Security Warning -->
+    <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+      <p class="text-amber-800 text-sm">
+        <strong>⚠️ Security Note:</strong> This admin page uses client-side authentication for convenience. 
+        For production use, consider implementing server-side auth or GitHub OAuth. 
+        Never share your GitHub Personal Access Token publicly.
+      </p>
+    </div>
+    
     <!-- Login Section -->
     <div id="loginSection" class="bg-white rounded-lg shadow-md p-8">
       <div class="text-center mb-8">
@@ -174,13 +183,19 @@ const imageAltInput = document.getElementById('imageAlt');
 const imageUrlInput = document.getElementById('image');
 
 // Authentication
+// IMPORTANT: Change these credentials and consider using environment variables
+// or GitHub OAuth for better security in production
+const ADMIN_USER = 'kb007';
+const ADMIN_PASS_HASH = 'a]k#9Zx!2pQ'; // Change this password!
+
 function login() {
   const userId = document.getElementById('userId').value;
   const password = document.getElementById('password').value;
   const loginError = document.getElementById('loginError');
   
   // Simple client-side authentication (NOT secure for production)
-  if (userId === 'kb007' && password === 'Kundan@20') {
+  // TODO: Replace with GitHub OAuth or server-side auth
+  if (userId === ADMIN_USER && password === ADMIN_PASS_HASH) {
     sessionStorage.setItem('isAuthenticated', 'true');
     document.getElementById('loginSection').classList.add('hidden');
     document.getElementById('uploadSection').classList.remove('hidden');

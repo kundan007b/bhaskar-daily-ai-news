@@ -1,0 +1,22 @@
+---
+layout: null
+permalink: /search.json
+---
+[
+{%- assign posts = site.posts | sort: 'date' | reverse -%}
+{%- for post in posts -%}
+  {
+    "title": {{ post.title | jsonify }},
+    "url": {{ post.url | absolute_url | jsonify }},
+    "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
+    "category": {{ post.categories | first | default: "" | jsonify }},
+    "categories": {{ post.categories | jsonify }},
+    "tags": {{ post.tags | jsonify }},
+    "keywords": {{ post.news_keywords | join: ", " | default: "" | jsonify }},
+    "image": {{ post.image | absolute_url | default: "" | jsonify }},
+    "lang": {{ post.lang | default: "en" | jsonify }},
+    "author": {{ post.author | default: "" | jsonify }},
+    "content": {{ post.content | strip_html | truncatewords: 100 | jsonify }}
+  }{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]
