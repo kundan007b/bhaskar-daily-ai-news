@@ -1,7 +1,7 @@
-<div class="lang-toggle" style="text-align:right;margin:1rem 0;padding:10px;background:#f8f9fa;border-radius:8px;">
-  <button id="lang-en" onclick="setLang('en')" class="lang-btn">🇬🇧 English</button>
+<div class="lang-toggle" data-lang-toggle style="text-align:right;margin:1rem 0;padding:10px;background:#f8f9fa;border-radius:8px;">
+  <button type="button" id="lang-en" data-lang-btn data-lang="en" class="lang-btn" aria-pressed="false">🇬🇧 English</button>
   <span style="color:#ccc;margin:0 5px;">|</span>
-  <button id="lang-hi" onclick="setLang('hi')" class="lang-btn">🇮🇳 हिन्दी</button>
+  <button type="button" id="lang-hi" data-lang-btn data-lang="hi" class="lang-btn" aria-pressed="false">🇮🇳 हिन्दी</button>
 </div>
 
 <style>
@@ -34,34 +34,79 @@
 </style>
 
 <script>
-function setLang(l) {
-  // Hide all language sections
-  document.querySelectorAll('.lang-section').forEach(d => {
-    d.style.display = 'none';
-  });
-  
-  // Show selected language
-  const section = document.getElementById(l);
-  if (section) {
-    section.style.display = 'block';
-  }
-  
-  // Update button states
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  const activeBtn = document.getElementById('lang-' + l);
-  if (activeBtn) {
-    activeBtn.classList.add('active');
-  }
-  
-  // Save preference
-  localStorage.setItem('prefLang', l);
-}
+(function () {
+  const toggleReady = () => {
+    const containers = document.querySelectorAll('[data-lang-toggle]');
+    if (!containers.length) {
+      return;
+    }
 
-// Initialize on page load
-(function() {
-  const savedLang = localStorage.getItem('prefLang') || 'en';
-  setLang(savedLang);
+    const sections = Array.from(document.querySelectorAll('.lang-section'));
+    if (!sections.length) {
+      containers.forEach((container) => {
+        container.style.display = 'none';
+        container.setAttribute('aria-hidden', 'true');
+      });
+      return;
+    }
+
+    const resolveLang = (section) => section?.dataset?.lang || section?.id || '';
+    const languages = Array.from(new Set(sections.map(resolveLang).filter(Boolean)));
+    if (languages.length <= 1) {
+      containers.forEach((container) => {
+        container.style.display = 'none';
+        container.setAttribute('aria-hidden', 'true');
+      });
+      sections.forEach((section) => {
+        section.hidden = false;
+      });
+      return;
+    }
+
+    const buttons = document.querySelectorAll('[data-lang-btn]');
+    const setLang = (lang) => {
+      let hasMatch = false;
+      sections.forEach((section) => {
+        const isMatch = resolveLang(section) === lang;
+        section.hidden = !isMatch;
+        if (isMatch) {
+          hasMatch = true;
+        }
+      });
+
+      if (!hasMatch) {
+        sections.forEach((section) => {
+          section.hidden = false;
+        });
+        buttons.forEach((button) => {
+          button.classList.remove('active');
+          button.setAttribute('aria-pressed', 'false');
+        });
+        return;
+      }
+
+      buttons.forEach((button) => {
+        const isActive = button.dataset.lang === lang;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+      localStorage.setItem('prefLang', lang);
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        setLang(button.dataset.lang);
+      });
+    });
+
+    const savedLang = localStorage.getItem('prefLang');
+    setLang(languages.includes(savedLang) ? savedLang : languages[0]);
+  };
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    toggleReady();
+  } else {
+    document.addEventListener('DOMContentLoaded', toggleReady);
+  }
 })();
 </script>

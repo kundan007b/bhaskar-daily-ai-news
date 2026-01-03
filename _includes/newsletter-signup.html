@@ -14,14 +14,14 @@
     </p>
   </div>
   
-  <form id="newsletter-form" style="display: flex; flex-direction: column; gap: 1rem;">
+  <form data-newsletter-form style="display: flex; flex-direction: column; gap: 1rem;" aria-label="Newsletter sign-up">
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
       <input 
         type="email" 
-        id="newsletter-email" 
         name="email" 
         placeholder="Enter your email address"
         required
+        data-newsletter-input
         style="
           flex: 1;
           min-width: 200px;
@@ -57,7 +57,7 @@
       </button>
     </div>
     
-    <div id="newsletter-message" style="display: none; padding: 0.75rem; border-radius: 8px; text-align: center; font-size: 0.9rem;"></div>
+    <div data-newsletter-status aria-live="polite" style="display: none; padding: 0.75rem; border-radius: 8px; text-align: center; font-size: 0.9rem;"></div>
     
     <p style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin: 0; text-align: center;">
       🔒 We respect your privacy. Unsubscribe anytime.
@@ -66,7 +66,7 @@
 </div>
 
 <style>
-  #newsletter-email::placeholder {
+  .newsletter-signup input[type="email"]::placeholder {
     color: rgba(255,255,255,0.6);
   }
   
@@ -79,19 +79,13 @@
       font-size: 1.25rem;
     }
     
-    #newsletter-form > div {
+    [data-newsletter-form] > div {
       flex-direction: column;
     }
     
-    #newsletter-form button {
+    [data-newsletter-form] button {
       width: 100%;
     }
   }
 </style>
 
-<script>
-  document.getElementById('newsletter-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    handleSubscription('newsletter-email', 'newsletter-message');
-  });
-</script>

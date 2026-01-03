@@ -63,6 +63,9 @@ email: contact@kbhaskar.tech
 twitter_username: kbtechnews
 github_username: kundan007b
 
+forms:
+  newsletter_endpoint: "https://script.google.com/macros/s/AKfycbyEWNfRn3ao2AwvRQzd_v6Y8wvvzt0JNoSB9wNpB7Sx5ZuSaXij0BeZ2fin5z8G8MmtWg/exec"
+
 # Analytics (replace with your own when ready)
 # google_analytics: "G-XXXXXXXXXX"
 

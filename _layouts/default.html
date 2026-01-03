@@ -104,11 +104,12 @@
       <div class="space-y-3">
         <h3 class="font-semibold text-white">Newsletter</h3>
         <p class="text-sm text-slate-400">Get weekly highlights in English and Hindi.</p>
-        <form class="space-y-3" name="newsletter" aria-label="Newsletter sign-up">
+          <form class="space-y-3" name="newsletter" aria-label="Newsletter sign-up" data-newsletter-form>
           <label class="sr-only" for="footer-email">Email</label>
-          <input id="footer-email" name="email" type="email" required placeholder="you@example.com" class="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+              <input id="footer-email" name="email" type="email" required placeholder="you@example.com" data-newsletter-input class="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
           <button type="submit" class="w-full rounded-md bg-gradient-to-r from-brand-500 to-indigo-600 px-3 py-2 text-sm font-semibold text-white">Subscribe</button>
-          <p class="text-xs text-slate-400">We respect your privacy. Unsubscribe anytime.</p>
+              <p data-newsletter-status class="text-xs text-slate-200 hidden" aria-live="polite"></p>
+              <p class="text-xs text-slate-400">We respect your privacy. Unsubscribe anytime.</p>
         </form>
       </div>
     </div>
@@ -130,6 +131,10 @@
       });
     }
   </script>
+      <script>
+        window.NEWSLETTER_ENDPOINT = "{{ site.forms.newsletter_endpoint | default: '' }}";
+      </script>
+      <script src="{{ '/assets/js/newsletter.js' | relative_url }}" defer></script>
 </body>
 </html>
 
