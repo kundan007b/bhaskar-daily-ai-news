@@ -3,70 +3,146 @@ layout: default
 ---
 {% assign featured = site.posts | first %}
 {% assign latest = site.posts | offset: 1 | limit: 6 %}
-<section class="bg-gradient-to-br from-slate-950 to-slate-900">
-  <div class="max-w-6xl mx-auto px-4 pt-10 pb-14 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10">
-    <div class="space-y-4">
-      <p class="text-xs uppercase tracking-[0.25em] text-brand-100">Featured</p>
-      <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight">{{ featured.title }}</h1>
-      <p class="text-lg text-slate-300 max-w-2xl">{{ featured.description | default: featured.excerpt | strip_html | truncate: 180 }}</p>
-      <div class="flex items-center gap-3 text-sm text-slate-300">
-        <span>{{ featured.date | date: "%B %d, %Y" }}</span>
-        <span aria-hidden="true">•</span>
-        <span class="uppercase tracking-wide text-brand-100">{{ featured.lang | default: 'en' }}</span>
+{% assign featured_word_count = featured.content | number_of_words %}
+{% assign featured_reading_time = featured_word_count | divided_by: 200 | plus: 1 %}
+
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden">
+  <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"30\" height=\"30\" viewBox=\"0 0 30 30\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M1.5 0.5L1.5 30\" stroke=\"%23ffffff\" stroke-opacity=\"0.03\"/%3E%3Cpath d=\"M0.5 1.5L30 1.5\" stroke=\"%23ffffff\" stroke-opacity=\"0.03\"/%3E%3C/svg%3E')]"></div>
+  <div class="relative max-w-6xl mx-auto px-4 pt-12 pb-16 grid grid-cols-1 lg:grid-cols-[1.2fr_0.9fr] gap-10 items-center">
+    <div class="space-y-5">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-100 text-xs font-semibold uppercase tracking-wide">
+          <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+          Featured
+        </span>
+        {% if featured.categories %}
+          {% for cat in featured.categories limit: 2 %}
+            <span class="text-xs text-slate-400 uppercase tracking-wide">{{ cat }}</span>
+          {% endfor %}
+        {% endif %}
       </div>
-      <a class="inline-flex items-center gap-3 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-brand-500 to-indigo-600 px-4 py-2" href="{{ featured.url | absolute_url }}">Read article
-        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-      </a>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight">{{ featured.title }}</h1>
+      <p class="text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed">{{ featured.description | default: featured.excerpt | strip_html | truncate: 200 }}</p>
+      <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          {{ featured.date | date: "%B %d, %Y" }}
+        </span>
+        <span aria-hidden="true">•</span>
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          {{ featured_reading_time }} min read
+        </span>
+        {% if featured.lang == 'hi' %}
+        <span aria-hidden="true">•</span>
+        <span class="text-amber-400">🇮🇳 हिन्दी</span>
+        {% endif %}
+      </div>
+      <div class="flex items-center gap-4 pt-2">
+        <a class="inline-flex items-center gap-3 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-brand-500 to-indigo-600 px-6 py-3 hover:from-brand-600 hover:to-indigo-700 transition-all shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40" href="{{ featured.url | absolute_url }}">
+          Read Full Story
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <a class="text-sm text-slate-400 hover:text-white transition-colors" href="{{ '/search' | absolute_url }}">
+          Browse all →
+        </a>
+      </div>
     </div>
-    <div class="rounded-3xl border border-white/10 bg-white/5 overflow-hidden">
+    <div class="rounded-3xl border border-white/10 bg-white/5 overflow-hidden shadow-2xl shadow-black/20 transform hover:scale-[1.02] transition-transform duration-300">
       {% if featured.image %}
-      <img class="w-full h-full object-cover" src="{{ featured.image | absolute_url }}" alt="{{ featured.title }}" loading="lazy">
+      <img class="w-full h-full object-cover aspect-[4/3]" src="{{ featured.image | absolute_url }}" alt="{{ featured.title }}" loading="eager">
       {% else %}
-      <div class="h-full w-full bg-gradient-to-br from-brand-500/30 to-indigo-700/30"></div>
+      <div class="h-full w-full aspect-[4/3] bg-gradient-to-br from-brand-500/30 to-indigo-700/30 flex items-center justify-center">
+        <span class="text-6xl">📰</span>
+      </div>
       {% endif %}
     </div>
   </div>
 </section>
 
-<section class="max-w-6xl mx-auto px-4 py-12 space-y-8">
+<!-- Quick Search Bar -->
+<section class="max-w-6xl mx-auto px-4 -mt-6 relative z-10">
+  <form action="{{ '/search' | absolute_url }}" method="get" class="flex items-center gap-3 p-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl">
+    <svg class="w-5 h-5 text-slate-400 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <input type="search" name="q" placeholder="Search articles, topics, or keywords..." class="flex-1 bg-transparent border-0 text-white placeholder-slate-400 focus:outline-none text-sm py-2">
+    <button type="submit" class="px-5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-colors">Search</button>
+  </form>
+</section>
+
+<!-- Latest Articles -->
+<section class="max-w-6xl mx-auto px-4 py-14 space-y-8">
   <div class="flex items-center justify-between">
     <div>
-      <p class="text-xs uppercase tracking-[0.3em] text-brand-100">Latest</p>
-      <h2 class="text-2xl font-semibold text-white">Fresh from the newsroom</h2>
+      <p class="text-xs uppercase tracking-[0.3em] text-brand-100 font-medium">Latest</p>
+      <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">Fresh from the newsroom</h2>
     </div>
-    <a class="text-sm text-brand-100 hover:text-white" href="{{ '/feed.xml' | absolute_url }}">RSS Feed</a>
+    <a class="inline-flex items-center gap-2 text-sm text-brand-100 hover:text-white transition-colors" href="{{ '/feed.xml' | absolute_url }}">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20 5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1Z"/></svg>
+      RSS Feed
+    </a>
   </div>
-  <div class="grid gap-6 md:grid-cols-3">
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     {% for post in latest %}
-    <a class="group rounded-2xl border border-white/10 bg-white/5 p-4 hover:border-brand-500/60 transition" href="{{ post.url | absolute_url }}">
+    {% assign word_count = post.content | number_of_words %}
+    {% assign reading_time = word_count | divided_by: 200 | plus: 1 %}
+    <a class="group rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-brand-500/40 transition-all duration-300 overflow-hidden" href="{{ post.url | absolute_url }}">
       {% if post.image %}
-      <div class="overflow-hidden rounded-xl mb-3">
-        <img class="h-40 w-full object-cover transition group-hover:scale-105" src="{{ post.image | absolute_url }}" alt="{{ post.title }}" loading="lazy">
+      <div class="overflow-hidden">
+        <img class="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105" src="{{ post.image | absolute_url }}" alt="{{ post.title }}" loading="lazy">
       </div>
       {% endif %}
-      <p class="text-xs text-slate-400">{{ post.date | date: "%b %d, %Y" }}</p>
-      <p class="mt-1 font-semibold text-white leading-tight">{{ post.title }}</p>
-      <p class="text-sm text-slate-300 mt-1">{{ post.description | default: post.excerpt | strip_html | truncate: 110 }}</p>
+      <div class="p-5">
+        <div class="flex items-center gap-3 text-xs text-slate-400 mb-3">
+          {% if post.categories %}
+            <span class="text-brand-100 uppercase tracking-wide font-medium">{{ post.categories | first }}</span>
+            <span aria-hidden="true">•</span>
+          {% endif %}
+          <span>{{ post.date | date: "%b %d, %Y" }}</span>
+          <span aria-hidden="true">•</span>
+          <span>{{ reading_time }} min</span>
+        </div>
+        <h3 class="font-semibold text-white leading-snug group-hover:text-brand-100 transition-colors mb-2">{{ post.title }}</h3>
+        <p class="text-sm text-slate-400 leading-relaxed">{{ post.description | default: post.excerpt | strip_html | truncate: 100 }}</p>
+      </div>
     </a>
     {% endfor %}
   </div>
 </section>
 
+<!-- Categories Section -->
 <section class="max-w-6xl mx-auto px-4 pb-16 space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <p class="text-xs uppercase tracking-[0.3em] text-brand-100">Browse</p>
-      <h2 class="text-2xl font-semibold text-white">Categories</h2>
+      <p class="text-xs uppercase tracking-[0.3em] text-brand-100 font-medium">Topics</p>
+      <h2 class="text-2xl font-bold text-white mt-1">Browse by Category</h2>
     </div>
   </div>
-  <div class="grid gap-4 md:grid-cols-3">
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {% assign categories = site.categories %}
     {% for category in categories %}
-      <a class="rounded-xl border border-white/10 bg-white/5 p-4 hover:border-brand-500/60 transition" href="{{ '/' | append: category[0] | append: '/' | absolute_url }}">
-        <p class="text-sm font-semibold text-white">{{ category[0] | capitalize }}</p>
-        <p class="text-xs text-slate-400">{{ category[1].size }} articles</p>
+      <a class="group rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-5 hover:border-brand-500/40 hover:from-brand-500/10 transition-all duration-300" href="{{ '/' | append: category[0] | append: '/' | absolute_url }}">
+        <div class="flex items-center justify-between mb-2">
+          <p class="font-semibold text-white group-hover:text-brand-100 transition-colors">{{ category[0] | capitalize }}</p>
+          <span class="text-xs text-slate-400 bg-white/10 px-2 py-1 rounded-full">{{ category[1].size }}</span>
+        </div>
+        <p class="text-xs text-slate-400">{{ category[1].size }} article{% if category[1].size != 1 %}s{% endif %}</p>
       </a>
     {% endfor %}
+  </div>
+</section>
+
+<!-- Newsletter CTA -->
+<section class="max-w-6xl mx-auto px-4 pb-16">
+  <div class="rounded-3xl bg-gradient-to-r from-brand-600/20 via-indigo-600/20 to-purple-600/20 border border-white/10 p-8 md:p-12 text-center">
+    <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">Stay Ahead of the Curve</h2>
+    <p class="text-slate-300 mb-6 max-w-xl mx-auto">Get the latest tech news, AI updates, and startup stories delivered to your inbox. Available in English and Hindi.</p>
+    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" data-newsletter-form>
+      <input type="email" name="email" required placeholder="Enter your email" data-newsletter-input class="flex-1 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+      <button type="submit" class="newsletter-btn rounded-full bg-gradient-to-r from-brand-500 to-indigo-600 px-8 py-3 text-sm font-semibold text-white hover:from-brand-600 hover:to-indigo-700 transition-all">Subscribe</button>
+    </form>
+    <p data-newsletter-status class="text-xs mt-3 hidden" aria-live="polite"></p>
+    <p class="text-xs text-slate-400 mt-4">🔒 No spam. Unsubscribe anytime.</p>
   </div>
 </section>
 

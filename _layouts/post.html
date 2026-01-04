@@ -2,85 +2,124 @@
 layout: default
 ---
 {% assign author = site.data.authors[page.author] %}
+{% assign word_count = content | number_of_words %}
+{% assign reading_time = word_count | divided_by: 200 | plus: 1 %}
 {% include schema-jsonld.html %}
 
-<article class="max-w-4xl mx-auto px-4 py-12">
-  <header class="space-y-4">
+<article class="max-w-4xl mx-auto px-4 py-12" itemscope itemtype="https://schema.org/NewsArticle">
+  <header class="space-y-5">
+    <!-- Category badges -->
     <div class="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-brand-100">
       {% if page.categories %}
         {% for cat in page.categories %}
-          <span class="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1">{{ cat }}</span>
+          <a href="{{ '/' | append: cat | append: '/' | absolute_url }}" class="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition-colors">{{ cat }}</a>
         {% endfor %}
       {% endif %}
       {% if page.lang == 'hi' %}
-        <span class="inline-flex items-center rounded-full bg-white/10 px-3 py-1">हिन्दी</span>
+        <span class="inline-flex items-center rounded-full bg-amber-500/20 text-amber-300 px-3 py-1">🇮🇳 हिन्दी</span>
       {% endif %}
     </div>
-    <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight {% if page.lang == 'hi' %}devanagari{% endif %}">{{ page.title }}</h1>
-    <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+    
+    <!-- Title -->
+    <h1 itemprop="headline" class="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.15] {% if page.lang == 'hi' %}devanagari{% endif %}">{{ page.title }}</h1>
+    
+    <!-- Meta info bar -->
+    <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300 border-b border-white/5 pb-5">
       {% if author %}
-      <a class="flex items-center gap-3 hover:text-white" href="{{ author.url | default: author.slug | prepend: '/authors/' | append: '/' | absolute_url }}">
-        <img class="h-10 w-10 rounded-full object-cover border border-white/10" src="{{ author.image | absolute_url }}" alt="{{ author.name }}" loading="lazy">
+      <a class="flex items-center gap-3 hover:text-white group" href="{{ author.url | default: author.slug | prepend: '/authors/' | append: '/' | absolute_url }}" itemprop="author" itemscope itemtype="https://schema.org/Person">
+        <img class="h-11 w-11 rounded-full object-cover border-2 border-white/10 group-hover:border-brand-500/50 transition" src="{{ author.image | absolute_url }}" alt="{{ author.name }}" loading="lazy" itemprop="image">
         <div>
-          <p class="font-semibold">{{ author.name }}</p>
+          <p class="font-semibold" itemprop="name">{{ author.name }}</p>
           <p class="text-xs text-slate-400">{{ author.role | default: "Tech Reporter" }}</p>
         </div>
       </a>
       {% endif %}
-      <div class="flex items-center gap-2 text-xs text-slate-400">
+      <div class="flex items-center gap-3 text-xs text-slate-400">
         <span aria-hidden="true">•</span>
-        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+        <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%B %d, %Y" }}</time>
         {% if page.last_modified_at %}
-          <span class="text-slate-500">(Updated {{ page.last_modified_at | date: "%B %d, %Y" }})</span>
+          <span class="text-slate-500">(Updated <time itemprop="dateModified" datetime="{{ page.last_modified_at | date_to_xmlschema }}">{{ page.last_modified_at | date: "%b %d" }}</time>)</span>
         {% endif %}
+        <span aria-hidden="true">•</span>
+        <span class="inline-flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          {{ reading_time }} min read
+        </span>
       </div>
     </div>
+    
+    <!-- Featured image -->
     {% if page.image %}
-    <figure class="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-      <img src="{{ page.image | absolute_url }}" alt="{{ page.image_alt | default: page.title }}" class="w-full h-auto object-cover" loading="lazy" decoding="async">
+    <figure class="overflow-hidden rounded-2xl border border-white/10 bg-white/5" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+      <img src="{{ page.image | absolute_url }}" alt="{{ page.image_alt | default: page.title }}" class="w-full h-auto object-cover" loading="eager" decoding="async" itemprop="url">
+      {% if page.image_alt %}
+      <meta itemprop="description" content="{{ page.image_alt }}">
+      {% endif %}
     </figure>
     {% endif %}
   </header>
 
-  <div class="mt-8 grid grid-cols-1 lg:grid-cols-[minmax(0,_1fr)_260px] gap-8">
-    <div class="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-200 prose-a:text-brand-100 prose-strong:text-white prose-img:rounded-xl">
+  <div class="mt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,_1fr)_280px] gap-10">
+    <!-- Article content -->
+    <div class="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-200 prose-a:text-brand-100 prose-strong:text-white prose-img:rounded-xl" itemprop="articleBody">
       <div class="{% if page.lang == 'hi' %}devanagari{% endif %}">
         {{ content }}
       </div>
     </div>
-    <aside class="space-y-4 lg:sticky lg:top-24 self-start">
+    
+    <!-- Sidebar -->
+    <aside class="space-y-5 lg:sticky lg:top-24 self-start">
       {% include social-share.html %}
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <h2 class="text-sm font-semibold text-white mb-3">Key points</h2>
-        <ul class="space-y-2 text-sm text-slate-300">
+      
+      <!-- Key points card -->
+      <div class="rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-5">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4 text-brand-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Key Takeaways
+        </h2>
+        <ul class="space-y-3 text-sm text-slate-300">
           {% if page.key_takeaways %}
             {% for point in page.key_takeaways %}
-              <li class="flex gap-2"><span class="text-brand-100">•</span><span>{{ point }}</span></li>
+              <li class="flex gap-3 leading-relaxed"><span class="text-brand-500 mt-1 shrink-0">→</span><span>{{ point }}</span></li>
             {% endfor %}
           {% else %}
-            <li class="flex gap-2"><span class="text-brand-100">•</span><span>Fast, verified update from KB Tech News.</span></li>
+            <li class="flex gap-3"><span class="text-brand-500">→</span><span>Fast, verified update from KB Tech News.</span></li>
           {% endif %}
         </ul>
+      </div>
+      
+      <!-- Newsletter signup in sidebar -->
+      <div class="rounded-2xl border border-white/10 bg-gradient-to-b from-brand-500/10 to-transparent p-5">
+        <h2 class="text-sm font-semibold text-white mb-2">📧 Stay Updated</h2>
+        <p class="text-xs text-slate-400 mb-3">Get news delivered to your inbox.</p>
+        <form class="space-y-2" data-newsletter-form>
+          <input type="email" name="email" required placeholder="your@email.com" data-newsletter-input class="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+          <button type="submit" class="newsletter-btn w-full rounded-md bg-brand-500 hover:bg-brand-600 px-3 py-2 text-sm font-semibold text-white transition">Subscribe</button>
+          <p data-newsletter-status class="text-xs hidden" aria-live="polite"></p>
+        </form>
       </div>
     </aside>
   </div>
 
-  <div class="mt-10">{% include author-box.html %}</div>
+  <div class="mt-12">{% include author-box.html %}</div>
 
   {% assign related_posts = site.posts | where_exp: "item", "item.url != page.url" | where: "lang", page.lang | limit: 3 %}
   {% if related_posts.size > 0 %}
-  <section class="mt-12">
-    <h2 class="text-xl font-semibold text-white mb-4">Related articles</h2>
-    <div class="grid gap-4 md:grid-cols-3">
+  <section class="mt-14 pt-10 border-t border-white/10">
+    <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+      <svg class="w-5 h-5 text-brand-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+      Related Articles
+    </h2>
+    <div class="grid gap-5 md:grid-cols-3">
       {% for post in related_posts %}
-      <a class="group rounded-xl border border-white/5 bg-white/5 p-4 hover:border-brand-500/60 transition" href="{{ post.url | absolute_url }}">
+      <a class="group rounded-xl border border-white/5 bg-white/5 p-4 hover:border-brand-500/60 hover:bg-white/10 transition-all" href="{{ post.url | absolute_url }}">
         {% if post.image %}
-        <div class="overflow-hidden rounded-lg mb-3">
-          <img class="w-full h-32 object-cover group-hover:scale-105 transition" src="{{ post.image | absolute_url }}" alt="{{ post.title }}" loading="lazy">
+        <div class="overflow-hidden rounded-lg mb-4">
+          <img class="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" src="{{ post.image | absolute_url }}" alt="{{ post.title }}" loading="lazy">
         </div>
         {% endif %}
-        <p class="text-xs text-slate-400">{{ post.date | date: "%b %d, %Y" }}</p>
-        <p class="mt-1 font-semibold text-white leading-tight">{{ post.title }}</p>
+        <p class="text-xs text-slate-400 mb-1">{{ post.date | date: "%b %d, %Y" }}</p>
+        <p class="font-semibold text-white leading-snug group-hover:text-brand-100 transition-colors">{{ post.title }}</p>
       </a>
       {% endfor %}
     </div>
